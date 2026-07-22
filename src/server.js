@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import session from 'express-session';
-import ConnectSqlite3 from 'connect-sqlite3';
+import BetterSqlite3Store from 'better-sqlite3-session-store';
+import Database from 'better-sqlite3';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
@@ -34,12 +35,13 @@ app.use(helmet({
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const SQLiteStore = ConnectSqlite3(session);
+const SqliteStore = BetterSqlite3Store(session);
 const sessDir = path.dirname(process.env.DB_PATH || './data/punch.sqlite');
 fs.mkdirSync(sessDir, { recursive: true });
+const sessionDb = new Database(path.join(sessDir, 'sessions.sqlite'));
 
 app.use(session({
-  store: new SQLiteStore({ db: 'sessions.sqlite', dir: sessDir }),
+  store: new SqliteStore({ client: sessionDb, expired: { clear: true, intervalMs: 900000 } }),
   secret: process.env.SESSION_SECRET || 'insecure-dev-secret',
   resave: false,
   saveUninitialized: false,
