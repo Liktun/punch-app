@@ -1,0 +1,15 @@
+<%- include('_head') %>
+<div class="card narrow">
+  <h1>Connexion</h1>
+  <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+  <form action="/login" method="post" autocomplete="off">
+    <label>Nom d'utilisateur
+      <input name="username" type="text" required autofocus maxlength="32">
+    </label>
+    <label>Mot de passe
+      <input name="password" type="password" required maxlength="200">
+    </label>
+    <button class="btn primary" type="submit">Se connecter</button>
+  </form>
+</div>
+<%- include('_foot') %>

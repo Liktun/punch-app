@@ -1,0 +1,44 @@
+<%- include('_head') %>
+<div class="card">
+  <h1>Bonjour, <%= user.full_name %></h1>
+  <% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %>"><%= flash.msg %></div><% } %>
+
+  <div class="status">
+    <% if (open) { %>
+      <p class="badge in">Quart en cours depuis <strong><%= fmtTime(open.clock_in) %></strong></p>
+      <form action="/punch/out" method="post">
+        <button class="btn danger big" type="submit">Puncher mon départ</button>
+      </form>
+    <% } else { %>
+      <p class="badge out">Aucun quart en cours</p>
+      <form action="/punch/in" method="post">
+        <button class="btn primary big" type="submit">Puncher mon arrivée</button>
+      </form>
+    <% } %>
+  </div>
+
+  <div class="period-box">
+    <span>Période courante : <strong><%= periodLabel %></strong></span>
+    <span class="total">Total : <strong><%= periodTotal %></strong></span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Mes derniers punchs</h2>
+  <table>
+    <thead><tr><th>Arrivée</th><th>Départ</th><th>Durée</th></tr></thead>
+    <tbody>
+      <% if (recent.length === 0) { %>
+        <tr><td colspan="3" class="muted">Aucun punch encore.</td></tr>
+      <% } %>
+      <% recent.forEach((p) => { %>
+        <tr>
+          <td><%= fmtTime(p.clock_in) %></td>
+          <td><%= p.clock_out ? fmtTime(p.clock_out) : '— en cours' %></td>
+          <td><%= p.clock_out ? fmtHours(new Date(p.clock_out) - new Date(p.clock_in)) : '—' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('_foot') %>

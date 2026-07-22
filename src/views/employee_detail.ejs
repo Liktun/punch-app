@@ -1,0 +1,26 @@
+<%- include('_head') %>
+<div class="card">
+  <a class="link" href="/admin?p=<%= offset %>">← Retour au rapport</a>
+  <h1><%= emp.full_name %></h1>
+  <div class="period-box">
+    <span>Période : <strong><%= periodLabel %></strong></span>
+    <span class="total">Total : <strong><%= total %></strong></span>
+  </div>
+
+  <table>
+    <thead><tr><th>Arrivée</th><th>Départ</th><th>Durée</th></tr></thead>
+    <tbody>
+      <% if (rows.length === 0) { %>
+        <tr><td colspan="3" class="muted">Aucun punch dans cette période.</td></tr>
+      <% } %>
+      <% rows.forEach((r) => { %>
+        <tr>
+          <td><%= fmtTime(r.clock_in) %></td>
+          <td><%= r.clock_out ? fmtTime(r.clock_out) : '— en cours' %></td>
+          <td><%= r.clock_out ? fmtHours(r.ms) : '—' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('_foot') %>

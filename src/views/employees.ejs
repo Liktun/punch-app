@@ -1,0 +1,37 @@
+<%- include('_head') %>
+<div class="card">
+  <h1>Employés</h1>
+  <% if (flash) { %><div class="flash ok"><%= flash.msg %></div><% } %>
+  <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+
+  <table>
+    <thead><tr><th>Nom</th><th>Utilisateur</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <% employees.forEach((e) => { %>
+        <tr>
+          <td><%= e.full_name %><% if (e.is_admin) { %> <span class="badge in tiny">admin</span><% } %></td>
+          <td><%= e.username %></td>
+          <td><%= e.active ? 'Actif' : 'Inactif' %></td>
+          <td>
+            <% if (!e.is_admin) { %>
+              <form action="/admin/employees/<%= e.id %>/toggle" method="post" class="inline">
+                <button class="btn ghost small"><%= e.active ? 'Désactiver' : 'Réactiver' %></button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card narrow">
+  <h2>Ajouter un employé</h2>
+  <form action="/admin/employees" method="post" autocomplete="off">
+    <label>Nom complet <input name="full_name" required maxlength="80"></label>
+    <label>Nom d'utilisateur <input name="username" required maxlength="32" pattern="[a-zA-Z0-9._-]{3,32}"></label>
+    <label>Mot de passe (min. 8) <input name="password" type="password" required minlength="8" maxlength="200"></label>
+    <button class="btn primary" type="submit">Créer</button>
+  </form>
+</div>
+<%- include('_foot') %>

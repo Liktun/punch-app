@@ -1,0 +1,22 @@
+[Unit]
+Description=Punch app (time tracking)
+After=network.target
+
+[Service]
+Type=simple
+User=punch
+Group=punch
+WorkingDirectory=/opt/punch-app
+EnvironmentFile=/opt/punch-app/.env
+ExecStart=/usr/bin/node /opt/punch-app/src/server.js
+Restart=on-failure
+RestartSec=3
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/punch-app/data
+
+[Install]
+WantedBy=multi-user.target

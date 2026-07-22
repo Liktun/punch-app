@@ -1,0 +1,31 @@
+<%- include('_head') %>
+<div class="card">
+  <h1>Rapport des heures</h1>
+  <% if (flash) { %><div class="flash ok"><%= flash.msg %></div><% } %>
+
+  <div class="period-nav">
+    <a class="btn ghost" href="/admin?p=<%= offset - 1 %>">← Période précédente</a>
+    <span class="period-label"><%= periodLabel %><% if (offset === 0) { %> <em>(courante)</em><% } %></span>
+    <a class="btn ghost" href="/admin?p=<%= offset + 1 %>" <%= offset >= 0 ? 'aria-disabled=true' : '' %>>Période suivante →</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Employé</th><th>Quarts</th><th>Heures</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% if (report.length === 0) { %>
+        <tr><td colspan="4" class="muted">Aucun employé actif.</td></tr>
+      <% } %>
+      <% report.forEach((r) => { %>
+        <tr>
+          <td><%= r.name %> <span class="muted">(<%= r.username %>)</span></td>
+          <td><%= r.shifts %><% if (r.openCount) { %> <span class="badge in tiny"><%= r.openCount %> en cours</span><% } %></td>
+          <td><strong><%= r.hours %></strong></td>
+          <td><a class="link" href="/admin/employee/<%= r.id %>?p=<%= offset %>">Détail</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('_foot') %>
