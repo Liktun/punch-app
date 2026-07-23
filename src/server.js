@@ -42,6 +42,14 @@ app.use(express.static(path.join(__dirname, 'public'), {
   etag: true,
 }));
 
+// Cache-busting version for static assets (mtime of style.css). Injected into <link>
+// so browsers always fetch fresh CSS after a deploy, while keeping long cache otherwise.
+let ASSET_VER = Date.now().toString(36);
+try {
+  ASSET_VER = fs.statSync(path.join(__dirname, 'public', 'style.css')).mtimeMs.toString(36);
+} catch { /* keep fallback */ }
+app.use((req, res, next) => { res.locals.assetVer = ASSET_VER; next(); });
+
 const SqliteStore = BetterSqlite3Store(session);
 const sessDir = path.dirname(process.env.DB_PATH || './data/punch.sqlite');
 fs.mkdirSync(sessDir, { recursive: true });

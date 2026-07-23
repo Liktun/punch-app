@@ -171,8 +171,9 @@ tfoot .grand td strong { color: var(--ok); }
 .empty-icon { font-size: 2.4rem; margin-bottom: 8px; }
 
 /* Login */
-.login-wrap { min-height: 60vh; display: grid; place-items: center; }
-.login-card { text-align: center; width: 100%; }
+.login-wrap { min-height: calc(100vh - 160px); display: flex; align-items: center;
+  justify-content: center; }
+.login-card { text-align: center; width: 100%; max-width: 400px; margin: 0 auto; }
 .login-card label { text-align: left; }
 .login-logo { width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 18px;
   display: grid; place-items: center; font-size: 2rem;
