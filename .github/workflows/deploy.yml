@@ -17,4 +17,4 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            sudo /opt/punch-app/deploy/deploy.sh main
+            sudo /bin/bash /opt/punch-app/deploy/deploy.sh main

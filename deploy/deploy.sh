@@ -16,7 +16,11 @@ echo "[deploy] npm install (prod)"
 npm install --omit=dev --no-audit --no-fund
 
 echo "[deploy] fixing ownership"
+# App files owned by the runtime user, but keep the deploy script root-owned + executable
+# so the low-priv CI user can keep invoking it via sudo.
 chown -R punch:punch "$APP_DIR"
+chown root:root "$APP_DIR/deploy/deploy.sh"
+chmod 755 "$APP_DIR/deploy/deploy.sh"
 
 echo "[deploy] restart service"
 systemctl restart punch-app
