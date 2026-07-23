@@ -1,16 +1,20 @@
 <%- include('_head') %>
-<div class="card narrow">
-  <h1>Connexion à Pointo</h1>
-  <% if (error) { %><div class="flash err"><%= error %></div><% } %>
-  <form action="/login" method="post" autocomplete="off">
-    <input type="hidden" name="_csrf" value="<%= csrf %>">
-    <label>Nom d'utilisateur
-      <input name="username" type="text" required autofocus maxlength="32">
-    </label>
-    <label>Mot de passe
-      <input name="password" type="password" required maxlength="200">
-    </label>
-    <button class="btn primary" type="submit">Se connecter</button>
-  </form>
+<div class="login-wrap">
+  <div class="card narrow login-card">
+    <div class="login-logo">⏱</div>
+    <h1>Connexion à Pointo</h1>
+    <p class="login-sub">Entre tes identifiants pour puncher.</p>
+    <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+    <form action="/login" method="post" autocomplete="off">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <label>Nom d'utilisateur
+        <input name="username" type="text" required autofocus maxlength="32" autocapitalize="none">
+      </label>
+      <label>Mot de passe
+        <input name="password" type="password" required maxlength="200">
+      </label>
+      <button class="btn primary big" type="submit">Se connecter</button>
+    </form>
+  </div>
 </div>
 <%- include('_foot') %>

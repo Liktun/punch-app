@@ -161,6 +161,14 @@ function fmtTime(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleString('fr-CA', { dateStyle: 'short', timeStyle: 'short' });
 }
+function fmtTimeOnly(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
+}
+function fmtDayShort(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('fr-CA', { weekday: 'short', day: '2-digit', month: 'short' });
+}
 // Format an ISO instant into a value usable by <input type="datetime-local"> (local time).
 function toLocalInput(iso) {
   if (!iso) return '';
@@ -225,6 +233,7 @@ app.get('/dashboard', requireAuth, (req, res) => {
   const recent = q.recentPunches.all(req.user.id);
   res.render('dashboard', {
     user: req.user,
+    wrapClass: 'dash',
     open,
     periodLabel: periodLabel(period),
     periodNet: fmtHours(agg.netMs),
@@ -232,8 +241,11 @@ app.get('/dashboard', requireAuth, (req, res) => {
     periodOvertime: fmtHours(agg.overtimeMs),
     periodBreak: fmtHours(agg.breakMs),
     hasOvertime: agg.overtimeMs > 0,
+    periodShifts: agg.shifts,
     recent,
     fmtTime,
+    fmtTimeOnly,
+    fmtDayShort,
     fmtHours,
     flash: req.session.flash || null,
   });

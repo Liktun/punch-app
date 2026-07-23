@@ -18,6 +18,20 @@ Punch d'arrivée/départ des employés, calcul des heures travaillées par **pé
 - **Heures supplémentaires** : au-delà de 40 h/semaine (Lun–Dim), calculées par semaine à l'intérieur de la période, affichées séparément (taux configurable).
 - **Périodes de paie** : bi-hebdomadaires, alignées sur une date d'ancrage configurable (`.env`).
 
+## Fonctionnalités additionnelles
+
+Ajouts au-delà du cœur du mandat (punch + calcul + vue admin) :
+
+- **Page d'accueil (landing)** publique et moderne avec nom de l'app et accès rapide à la connexion.
+- **Corrections d'oublis (admin)** : CRUD complet sur les quarts (ajout / édition / suppression) pour gérer les punchs manqués, avec validation et traçabilité (flag « modifié » + note).
+- **Déduction automatique de pauses** par seuil de durée (configurable, désactivable).
+- **Heures supplémentaires hebdomadaires** (>40 h/semaine) calculées et affichées séparément des heures régulières, taux configurable.
+- **UX temps réel** côté employé : horloge en direct + compteur de durée du quart en cours.
+- **Sécurité renforcée** : protection CSRF sur tous les formulaires, rate limiting sur la connexion, CSP stricte, en-têtes HSTS/X-Frame.
+- **Performance** : compression gzip, cache navigateur des assets, agrégation en une seule requête (pas de N+1).
+- **CI/CD** : redéploiement automatique sur `git push` via GitHub Actions + clé SSH dédiée (user à privilèges restreints).
+- **Tests** : suite de vérification du calcul des heures (pauses, overtime, découpage hebdomadaire).
+
 ## Stack & choix
 
 | Élément | Choix | Pourquoi |

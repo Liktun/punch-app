@@ -1,59 +1,93 @@
 <%- include('_head') %>
-<div class="card">
-  <h1>Bonjour, <%= user.full_name %></h1>
-  <% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %>"><%= flash.msg %></div><% } %>
 
-  <div class="clock" id="clock" data-now="<%= Date.now() %>">--:--:--</div>
+<% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %> flash-float"><%= flash.msg %></div><% } %>
 
-  <div class="status">
+<section class="hero">
+  <p class="greeting" id="greeting">Bonjour, <%= user.full_name.split(' ')[0] %> 👋</p>
+
+  <div class="punch-card <%= open ? 'is-open' : 'is-closed' %>">
+    <div class="clock-big" id="clock">--:--:--</div>
+
     <% if (open) { %>
-      <p class="badge in">
-        Quart en cours depuis <strong><%= fmtTime(open.clock_in) %></strong><br>
-        <span class="ticker" id="ticker" data-start="<%= new Date(open.clock_in).getTime() %>">0h00</span> travaillées
-      </p>
+      <div class="shift-state">
+        <span class="live-dot"></span>
+        <span>Quart en cours</span>
+      </div>
+      <div class="worked-now">
+        <span class="worked-val" id="ticker" data-start="<%= new Date(open.clock_in).getTime() %>">0h00</span>
+        <span class="worked-label">depuis <%= fmtTimeOnly(open.clock_in) %></span>
+      </div>
       <form action="/punch/out" method="post" onsubmit="return confirm('Confirmer ton départ ?');">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
-        <button class="btn danger big" type="submit">Puncher mon départ</button>
+        <button class="punch-btn out" type="submit">
+          <span class="punch-btn-icon">■</span> Puncher mon départ
+        </button>
       </form>
     <% } else { %>
-      <p class="badge out">Aucun quart en cours</p>
+      <div class="shift-state idle">
+        <span>Prêt à commencer</span>
+      </div>
+      <div class="worked-now">
+        <span class="worked-label">Aucun quart en cours</span>
+      </div>
       <form action="/punch/in" method="post" onsubmit="return confirm('Confirmer ton arrivée ?');">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
-        <button class="btn primary big" type="submit">Puncher mon arrivée</button>
+        <button class="punch-btn in" type="submit">
+          <span class="punch-btn-icon">▶</span> Puncher mon arrivée
+        </button>
       </form>
     <% } %>
   </div>
+</section>
 
-  <div class="period-box">
-    <span>Période courante : <strong><%= periodLabel %></strong></span>
-    <span class="total">Total net : <strong><%= periodNet %></strong></span>
+<section class="card period-summary">
+  <div class="summary-head">
+    <span class="summary-title">Cette période de paie</span>
+    <span class="summary-sub"><%= periodLabel %></span>
   </div>
-  <div class="stat-grid">
-    <div class="stat"><span class="stat-label">Régulières</span><span class="stat-val"><%= periodRegular %></span></div>
-    <% if (hasOvertime) { %>
-    <div class="stat ot"><span class="stat-label">Heures supp.</span><span class="stat-val"><%= periodOvertime %></span></div>
-    <% } %>
-    <div class="stat"><span class="stat-label">Pauses déduites</span><span class="stat-val"><%= periodBreak %></span></div>
+  <div class="big-total">
+    <span class="big-total-val"><%= periodNet %></span>
+    <span class="big-total-label">net travaillées</span>
   </div>
-</div>
+  <div class="chips">
+    <span class="chip"><span class="chip-dot reg"></span><%= periodRegular %> régulières</span>
+    <% if (hasOvertime) { %><span class="chip"><span class="chip-dot ot"></span><%= periodOvertime %> supp.</span><% } %>
+    <% if (periodBreak !== '0h00') { %><span class="chip"><span class="chip-dot brk"></span><%= periodBreak %> pauses</span><% } %>
+    <span class="chip muted-chip"><%= periodShifts %> quart<%= periodShifts > 1 ? 's' : '' %></span>
+  </div>
+</section>
 
-<div class="card">
-  <h2>Mes derniers punchs</h2>
-  <table>
-    <thead><tr><th>Arrivée</th><th>Départ</th><th>Durée</th></tr></thead>
-    <tbody>
-      <% if (recent.length === 0) { %>
-        <tr><td colspan="3" class="muted">Aucun punch encore.</td></tr>
-      <% } %>
+<section class="card">
+  <h2 class="section-title">Mes derniers punchs</h2>
+  <% if (recent.length === 0) { %>
+    <div class="empty">
+      <div class="empty-icon">🗓️</div>
+      <p>Aucun punch pour l'instant.<br>Ton premier quart apparaîtra ici.</p>
+    </div>
+  <% } else { %>
+    <ul class="punch-list">
       <% recent.forEach((p) => { %>
-        <tr>
-          <td><%= fmtTime(p.clock_in) %></td>
-          <td><%= p.clock_out ? fmtTime(p.clock_out) : '— en cours' %></td>
-          <td><%= p.clock_out ? fmtHours(new Date(p.clock_out) - new Date(p.clock_in)) : '—' %></td>
-        </tr>
+        <li class="punch-item">
+          <div class="punch-when">
+            <span class="punch-day"><%= fmtDayShort(p.clock_in) %></span>
+            <span class="punch-times">
+              <%= fmtTimeOnly(p.clock_in) %>
+              <span class="punch-arrow">→</span>
+              <%= p.clock_out ? fmtTimeOnly(p.clock_out) : 'en cours' %>
+            </span>
+          </div>
+          <div class="punch-dur">
+            <% if (p.clock_out) { %>
+              <span class="dur-pill"><%= fmtHours(new Date(p.clock_out) - new Date(p.clock_in)) %></span>
+            <% } else { %>
+              <span class="dur-pill live"><span class="live-dot small"></span> en cours</span>
+            <% } %>
+          </div>
+        </li>
       <% }) %>
-    </tbody>
-  </table>
-</div>
+    </ul>
+  <% } %>
+</section>
+
 <script src="/dashboard.js"></script>
 <%- include('_foot') %>
