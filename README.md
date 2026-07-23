@@ -1,6 +1,6 @@
-# Punch — Web app de gestion des heures (beta)
+# Pointo — Web app de gestion des heures (beta)
 
-Punch d'arrivée/départ des employés, calcul des heures travaillées par **période de paie bi-hebdomadaire**, et vue admin avec les totaux par employé.
+Punch d'arrivée/départ des employés, calcul des heures travaillées par **période de paie bi-hebdomadaire**, déduction de pauses, heures supplémentaires, et vue admin avec corrections.
 
 **Live** : https://fbtest02.com
 
@@ -8,8 +8,14 @@ Punch d'arrivée/départ des employés, calcul des heures travaillées par **pé
 
 ## Fonctionnalités
 
-- **Employé** : login/mot de passe, punch arrivée / départ, total de la période courante, historique récent.
-- **Admin** : rapport des heures par employé pour une période de paie (navigation période précédente/suivante), détail par employé, gestion des employés (créer, activer/désactiver).
+- **Landing** : page d'accueil publique (nom + « Se connecter »).
+- **Employé** : login/mot de passe, punch arrivée / départ, horloge + compteur en direct, total net de la période avec ventilation régulières / supp. / pauses.
+- **Admin** :
+  - Rapport par employé (régulières, supp., net) avec grand total, navigation entre périodes.
+  - **Corrections d'oublis** : ajouter / éditer / supprimer un quart, avec validation (départ > arrivée, anti-chevauchement) et flag « modifié ».
+  - Gestion des employés (créer, activer/désactiver).
+- **Pauses** : déduction automatique (ex. quart > 6 h → −30 min), configurable via `.env`.
+- **Heures supplémentaires** : au-delà de 40 h/semaine (Lun–Dim), calculées par semaine à l'intérieur de la période, affichées séparément (taux configurable).
 - **Périodes de paie** : bi-hebdomadaires, alignées sur une date d'ancrage configurable (`.env`).
 
 ## Stack & choix
@@ -94,12 +100,26 @@ npm start
 4. Vhost Apache reverse proxy `fbtest02.com` → `127.0.0.1:3000` + SSL.
 5. Push sur `main` → GitHub Actions redéploie via SSH.
 
+## Configuration (extraits `.env`)
+
+```
+BREAK_THRESHOLD_MIN=360     # au-delà de 6h -> pause déduite
+BREAK_DEDUCTION_MIN=30      # minutes déduites (0 = désactivé)
+OVERTIME_WEEKLY_HOURS=40    # seuil hebdo overtime
+OVERTIME_RATE=1.5           # info d'affichage
+PAY_PERIOD_ANCHOR=2026-01-05
+PAY_PERIOD_DAYS=14
+TZ=America/Toronto
+```
+
+## Tests
+
+`node scripts/test-hours.js` — vérifie déduction de pause, overtime hebdomadaire, split correct par semaine.
+
 ## Ce que je ferais avec plus de temps
 
-- Édition/suppression de punchs côté admin + correction manuelle des oublis.
 - Export CSV/PDF des périodes de paie.
-- Gestion des pauses, heures supp., arrondis configurables.
-- Rôles multiples (gérants par équipe), audit log.
+- Arrondis configurables (5/15 min), gestion de pauses par punch explicite.
+- Rôles multiples (gérants par équipe), audit log complet des corrections.
 - Object cache (Valkey) si montée en charge ; migrations DB versionnées.
 - Backups automatisés testés (cron `sqlite3 .backup` + rétention).
-- Tests automatisés (calcul des périodes, edge cases punch).
