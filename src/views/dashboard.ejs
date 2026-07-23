@@ -20,7 +20,7 @@
       <form action="/punch/out" method="post" onsubmit="return confirm('Confirmer ton départ ?');">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
         <button class="punch-btn out" type="submit">
-          <span class="punch-btn-icon">■</span> Puncher mon départ
+          <span class="punch-btn-icon">■</span> Punch out
         </button>
       </form>
     <% } else { %>
@@ -33,7 +33,7 @@
       <form action="/punch/in" method="post" onsubmit="return confirm('Confirmer ton arrivée ?');">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
         <button class="punch-btn in" type="submit">
-          <span class="punch-btn-icon">▶</span> Puncher mon arrivée
+          <span class="punch-btn-icon">▶</span> Punch in
         </button>
       </form>
     <% } %>
