@@ -14,6 +14,7 @@ import fs from 'node:fs';
 
 import db from './db.js';
 import { periodByOffset, periodFor, periodLabel } from './payperiod.js';
+import { aggregate, shiftNet, fmtHours as fmtHoursH, OT_RATE } from './hours.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -93,37 +94,44 @@ const q = {
   openPunch: db.prepare('SELECT * FROM punches WHERE employee_id = ? AND clock_out IS NULL ORDER BY clock_in DESC LIMIT 1'),
   insertPunch: db.prepare('INSERT INTO punches (employee_id, clock_in) VALUES (?, ?)'),
   closePunch: db.prepare('UPDATE punches SET clock_out = ? WHERE id = ? AND clock_out IS NULL'),
+  punchById: db.prepare('SELECT * FROM punches WHERE id = ?'),
   punchesForEmpInRange: db.prepare(
     `SELECT * FROM punches
      WHERE employee_id = ? AND clock_in >= ? AND clock_in < ?
      ORDER BY clock_in ASC`
   ),
+  // All punches for all active non-admin employees in one range (single query -> no N+1).
+  punchesInRange: db.prepare(
+    `SELECT p.* FROM punches p
+     JOIN employees e ON e.id = p.employee_id
+     WHERE e.active = 1 AND e.is_admin = 0
+       AND p.clock_in >= ? AND p.clock_in < ?
+     ORDER BY p.clock_in ASC`
+  ),
   recentPunches: db.prepare(
     `SELECT * FROM punches WHERE employee_id = ? ORDER BY clock_in DESC LIMIT 10`
   ),
-  allActiveEmployees: db.prepare('SELECT * FROM employees WHERE active = 1 ORDER BY full_name'),
+  allActiveEmployees: db.prepare('SELECT * FROM employees WHERE active = 1 AND is_admin = 0 ORDER BY full_name'),
   allEmployees: db.prepare('SELECT * FROM employees ORDER BY active DESC, full_name'),
-  // Phase 5: single grouped query for the whole report instead of one query per employee (kills N+1).
-  // Computes worked seconds (closed shifts) + open-shift count per active non-admin employee for a period.
-  reportForPeriod: db.prepare(`
-    SELECT e.id, e.full_name, e.username,
-           COUNT(p.id)                                         AS shifts,
-           COALESCE(SUM(CASE WHEN p.clock_out IS NOT NULL
-                 THEN MAX(strftime('%s', p.clock_out) - strftime('%s', p.clock_in), 0)
-                 ELSE 0 END), 0)                               AS worked_sec,
-           COALESCE(SUM(CASE WHEN p.clock_out IS NULL THEN 1 ELSE 0 END), 0) AS open_count
-    FROM employees e
-    LEFT JOIN punches p
-      ON p.employee_id = e.id
-     AND p.clock_in >= ? AND p.clock_in < ?
-    WHERE e.active = 1 AND e.is_admin = 0
-    GROUP BY e.id
-    ORDER BY e.full_name
-  `),
   insertEmployee: db.prepare(
     'INSERT INTO employees (username, full_name, password_hash, is_admin, active) VALUES (?, ?, ?, 0, 1)'
   ),
   setActive: db.prepare('UPDATE employees SET active = ? WHERE id = ? AND is_admin = 0'),
+  // Admin corrections (CRUD)
+  insertPunchFull: db.prepare(
+    'INSERT INTO punches (employee_id, clock_in, clock_out, edited_by_admin, note) VALUES (?, ?, ?, 1, ?)'
+  ),
+  updatePunch: db.prepare(
+    'UPDATE punches SET clock_in = ?, clock_out = ?, edited_by_admin = 1, note = ? WHERE id = ?'
+  ),
+  deletePunch: db.prepare('DELETE FROM punches WHERE id = ?'),
+  overlapCount: db.prepare(
+    // Count punches for this employee that overlap [in,out), excluding a given id.
+    `SELECT COUNT(*) c FROM punches
+     WHERE employee_id = ? AND id != ?
+       AND clock_out IS NOT NULL
+       AND clock_in < ? AND clock_out > ?`
+  ),
 };
 
 // ---- Helpers ----
@@ -139,40 +147,42 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// Sum worked hours from punch rows within [start,end); open shifts excluded from totals but reported.
-function summarize(punches) {
-  let totalMs = 0;
-  let openCount = 0;
-  const rows = punches.map((p) => {
-    const inD = new Date(p.clock_in);
-    let ms = 0;
-    if (p.clock_out) {
-      ms = new Date(p.clock_out).getTime() - inD.getTime();
-      if (ms < 0) ms = 0; // guard against clock skew / bad data
-      totalMs += ms;
-    } else {
-      openCount += 1;
-    }
-    return { ...p, ms };
-  });
-  return { rows, totalMs, hours: totalMs / 3_600_000, openCount };
-}
+// ---- Helpers ----
+const fmtHours = fmtHoursH; // from hours.js (single source of truth)
 
-function fmtHours(ms) {
-  const totalMin = Math.round(ms / 60000);
-  const h = Math.floor(totalMin / 60);
-  const m = totalMin % 60;
-  return `${h}h${String(m).padStart(2, '0')}`;
+// Build per-row detail (gross/break/net) + totals for a set of punches.
+function detailRows(punches) {
+  return punches.map((p) => {
+    const s = shiftNet(p);
+    return { ...p, grossMs: s.grossMs, breakMs: s.breakMs, netMs: s.netMs, open: s.open };
+  });
 }
 function fmtTime(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleString('fr-CA', { dateStyle: 'short', timeStyle: 'short' });
 }
+// Format an ISO instant into a value usable by <input type="datetime-local"> (local time).
+function toLocalInput(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const off = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - off).toISOString().slice(0, 16);
+}
+// Parse a datetime-local string (local) into an ISO UTC string; returns null if invalid.
+function parseLocalInput(v) {
+  if (!v) return null;
+  const d = new Date(v); // interpreted as local time
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
 
 // ---- Routes ----
+// Landing page (public). Authenticated users skip straight to their area.
 app.get('/', (req, res) => {
-  if (req.session.uid) return res.redirect('/dashboard');
-  res.redirect('/login');
+  if (req.session.uid) {
+    const u = q.userById.get(req.session.uid);
+    if (u) return res.redirect(u.is_admin ? '/admin' : '/dashboard');
+  }
+  res.render('landing');
 });
 
 app.get('/login', (req, res) => {
@@ -211,13 +221,17 @@ app.get('/dashboard', requireAuth, (req, res) => {
   const open = q.openPunch.get(req.user.id);
   const period = periodFor(new Date());
   const punches = q.punchesForEmpInRange.all(req.user.id, period.start.toISOString(), period.end.toISOString());
-  const summary = summarize(punches);
+  const agg = aggregate(punches);
   const recent = q.recentPunches.all(req.user.id);
   res.render('dashboard', {
     user: req.user,
     open,
     periodLabel: periodLabel(period),
-    periodTotal: fmtHours(summary.totalMs),
+    periodNet: fmtHours(agg.netMs),
+    periodRegular: fmtHours(agg.regularMs),
+    periodOvertime: fmtHours(agg.overtimeMs),
+    periodBreak: fmtHours(agg.breakMs),
+    hasOvertime: agg.overtimeMs > 0,
     recent,
     fmtTime,
     fmtHours,
@@ -251,22 +265,31 @@ app.post('/punch/out', requireAuth, verifyCsrf, (req, res) => {
 });
 
 // Admin: totals per employee for a selected pay period.
-// Phase 5: one grouped SQL query for the whole report (no N+1).
+// One query fetches all punches in range; aggregation (breaks + weekly OT) done in JS, grouped by employee. No N+1.
 app.get('/admin', requireAuth, requireAdmin, (req, res) => {
   const offset = parseInt(req.query.p || '0', 10) || 0;
   const period = periodByOffset(offset);
-  const rows = q.reportForPeriod.all(period.start.toISOString(), period.end.toISOString());
-  let grandMs = 0;
-  const report = rows.map((r) => {
-    const ms = r.worked_sec * 1000;
-    grandMs += ms;
+  const employees = q.allActiveEmployees.all();
+  const allPunches = q.punchesInRange.all(period.start.toISOString(), period.end.toISOString());
+  const byEmp = new Map();
+  for (const p of allPunches) {
+    if (!byEmp.has(p.employee_id)) byEmp.set(p.employee_id, []);
+    byEmp.get(p.employee_id).push(p);
+  }
+  let grandNet = 0, grandReg = 0, grandOt = 0;
+  const report = employees.map((e) => {
+    const agg = aggregate(byEmp.get(e.id) || []);
+    grandNet += agg.netMs; grandReg += agg.regularMs; grandOt += agg.overtimeMs;
     return {
-      id: r.id,
-      name: r.full_name,
-      username: r.username,
-      hours: fmtHours(ms),
-      openCount: r.open_count,
-      shifts: r.shifts,
+      id: e.id,
+      name: e.full_name,
+      username: e.username,
+      net: fmtHours(agg.netMs),
+      regular: fmtHours(agg.regularMs),
+      overtime: fmtHours(agg.overtimeMs),
+      hasOt: agg.overtimeMs > 0,
+      openCount: agg.openCount,
+      shifts: agg.shifts,
     };
   });
   res.render('admin', {
@@ -275,31 +298,98 @@ app.get('/admin', requireAuth, requireAdmin, (req, res) => {
     periodLabel: periodLabel(period),
     offset,
     report,
-    grandTotal: fmtHours(grandMs),
+    grandNet: fmtHours(grandNet),
+    grandReg: fmtHours(grandReg),
+    grandOt: fmtHours(grandOt),
+    otRate: OT_RATE,
     flash: req.session.flash || null,
   });
   req.session.flash = null;
 });
 
-// Admin: detail of one employee for the selected period.
+// Admin: detail of one employee for the selected period (with correction controls).
 app.get('/admin/employee/:id', requireAuth, requireAdmin, (req, res) => {
   const emp = q.userById.get(parseInt(req.params.id, 10));
   if (!emp) return res.status(404).render('error', { message: 'Employé introuvable.' });
   const offset = parseInt(req.query.p || '0', 10) || 0;
   const period = periodByOffset(offset);
   const punches = q.punchesForEmpInRange.all(emp.id, period.start.toISOString(), period.end.toISOString());
-  const s = summarize(punches);
+  const agg = aggregate(punches);
   res.render('employee_detail', {
     user: req.user,
     emp,
     period,
     periodLabel: periodLabel(period),
     offset,
-    rows: s.rows,
-    total: fmtHours(s.totalMs),
+    rows: detailRows(punches),
+    net: fmtHours(agg.netMs),
+    regular: fmtHours(agg.regularMs),
+    overtime: fmtHours(agg.overtimeMs),
+    breakTotal: fmtHours(agg.breakMs),
+    hasOt: agg.overtimeMs > 0,
+    otRate: OT_RATE,
     fmtTime,
     fmtHours,
+    toLocalInput,
+    flash: req.session.flash || null,
   });
+  req.session.flash = null;
+});
+
+// Admin corrections: add / edit / delete a punch.
+function validatePunchTimes(inIso, outIso) {
+  if (!inIso) return 'Heure d\'arrivée invalide.';
+  if (outIso !== null) {
+    if (new Date(outIso).getTime() <= new Date(inIso).getTime()) {
+      return 'Le départ doit être après l\'arrivée.';
+    }
+  }
+  return null;
+}
+
+app.post('/admin/employee/:id/punch/add', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
+  const emp = q.userById.get(parseInt(req.params.id, 10));
+  if (!emp) return res.status(404).render('error', { message: 'Employé introuvable.' });
+  const offset = parseInt(req.body.p || '0', 10) || 0;
+  const inIso = parseLocalInput(req.body.clock_in);
+  const outIso = req.body.clock_out ? parseLocalInput(req.body.clock_out) : null;
+  const note = String(req.body.note || '').slice(0, 200) || null;
+  const err = validatePunchTimes(inIso, outIso);
+  if (err) { req.session.flash = { type: 'warn', msg: err }; return res.redirect(`/admin/employee/${emp.id}?p=${offset}`); }
+  if (outIso && q.overlapCount.get(emp.id, 0, outIso, inIso).c > 0) {
+    req.session.flash = { type: 'warn', msg: 'Ce quart en chevauche un autre existant.' };
+    return res.redirect(`/admin/employee/${emp.id}?p=${offset}`);
+  }
+  q.insertPunchFull.run(emp.id, inIso, outIso, note);
+  req.session.flash = { type: 'ok', msg: 'Quart ajouté.' };
+  res.redirect(`/admin/employee/${emp.id}?p=${offset}`);
+});
+
+app.post('/admin/punch/:pid/edit', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
+  const punch = q.punchById.get(parseInt(req.params.pid, 10));
+  if (!punch) return res.status(404).render('error', { message: 'Quart introuvable.' });
+  const offset = parseInt(req.body.p || '0', 10) || 0;
+  const inIso = parseLocalInput(req.body.clock_in);
+  const outIso = req.body.clock_out ? parseLocalInput(req.body.clock_out) : null;
+  const note = String(req.body.note || '').slice(0, 200) || null;
+  const err = validatePunchTimes(inIso, outIso);
+  if (err) { req.session.flash = { type: 'warn', msg: err }; return res.redirect(`/admin/employee/${punch.employee_id}?p=${offset}`); }
+  if (outIso && q.overlapCount.get(punch.employee_id, punch.id, outIso, inIso).c > 0) {
+    req.session.flash = { type: 'warn', msg: 'Ce quart en chevauche un autre existant.' };
+    return res.redirect(`/admin/employee/${punch.employee_id}?p=${offset}`);
+  }
+  q.updatePunch.run(inIso, outIso, note, punch.id);
+  req.session.flash = { type: 'ok', msg: 'Quart modifié.' };
+  res.redirect(`/admin/employee/${punch.employee_id}?p=${offset}`);
+});
+
+app.post('/admin/punch/:pid/delete', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
+  const punch = q.punchById.get(parseInt(req.params.pid, 10));
+  if (!punch) return res.status(404).render('error', { message: 'Quart introuvable.' });
+  const offset = parseInt(req.body.p || '0', 10) || 0;
+  q.deletePunch.run(punch.id);
+  req.session.flash = { type: 'ok', msg: 'Quart supprimé.' };
+  res.redirect(`/admin/employee/${punch.employee_id}?p=${offset}`);
 });
 
 // Admin: manage employees.

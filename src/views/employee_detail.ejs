@@ -2,25 +2,71 @@
 <div class="card">
   <a class="link" href="/admin?p=<%= offset %>">← Retour au rapport</a>
   <h1><%= emp.full_name %></h1>
+  <% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %>"><%= flash.msg %></div><% } %>
+
   <div class="period-box">
     <span>Période : <strong><%= periodLabel %></strong></span>
-    <span class="total">Total : <strong><%= total %></strong></span>
+    <span class="total">Net : <strong><%= net %></strong></span>
   </div>
+  <div class="stat-grid">
+    <div class="stat"><span class="stat-label">Régulières</span><span class="stat-val"><%= regular %></span></div>
+    <% if (hasOt) { %><div class="stat ot"><span class="stat-label">Heures supp. (<%= otRate %>×)</span><span class="stat-val"><%= overtime %></span></div><% } %>
+    <div class="stat"><span class="stat-label">Pauses déduites</span><span class="stat-val"><%= breakTotal %></span></div>
+  </div>
+</div>
 
+<div class="card">
+  <h2>Quarts de la période</h2>
   <table>
-    <thead><tr><th>Arrivée</th><th>Départ</th><th>Durée</th></tr></thead>
+    <thead><tr><th>Arrivée</th><th>Départ</th><th>Brut</th><th>Pause</th><th>Net</th><th>Actions</th></tr></thead>
     <tbody>
       <% if (rows.length === 0) { %>
-        <tr><td colspan="3" class="muted">Aucun punch dans cette période.</td></tr>
+        <tr><td colspan="6" class="muted">Aucun quart dans cette période.</td></tr>
       <% } %>
       <% rows.forEach((r) => { %>
         <tr>
           <td><%= fmtTime(r.clock_in) %></td>
           <td><%= r.clock_out ? fmtTime(r.clock_out) : '— en cours' %></td>
-          <td><%= r.clock_out ? fmtHours(r.ms) : '—' %></td>
+          <td><%= r.open ? '—' : fmtHours(r.grossMs) %></td>
+          <td><%= r.breakMs ? '−' + fmtHours(r.breakMs) : '—' %></td>
+          <td><strong><%= r.open ? '—' : fmtHours(r.netMs) %></strong>
+              <% if (r.edited_by_admin) { %><span class="badge tiny edited" title="<%= r.note || '' %>">modifié</span><% } %>
+          </td>
+          <td class="actions-cell">
+            <details>
+              <summary class="link">Éditer</summary>
+              <form action="/admin/punch/<%= r.id %>/edit" method="post" class="edit-form">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <input type="hidden" name="p" value="<%= offset %>">
+                <label>Arrivée<input type="datetime-local" name="clock_in" value="<%= toLocalInput(r.clock_in) %>" required></label>
+                <label>Départ<input type="datetime-local" name="clock_out" value="<%= toLocalInput(r.clock_out) %>"></label>
+                <label>Note<input type="text" name="note" maxlength="200" value="<%= r.note || '' %>" placeholder="ex: départ oublié"></label>
+                <div class="row-btns">
+                  <button class="btn primary small" type="submit">Enregistrer</button>
+                </div>
+              </form>
+              <form action="/admin/punch/<%= r.id %>/delete" method="post" class="inline" onsubmit="return confirm('Supprimer ce quart ?');">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <input type="hidden" name="p" value="<%= offset %>">
+                <button class="btn danger small" type="submit">Supprimer</button>
+              </form>
+            </details>
+          </td>
         </tr>
       <% }) %>
     </tbody>
   </table>
+</div>
+
+<div class="card narrow">
+  <h2>Ajouter un quart (correction)</h2>
+  <form action="/admin/employee/<%= emp.id %>/punch/add" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" name="p" value="<%= offset %>">
+    <label>Arrivée <input type="datetime-local" name="clock_in" required></label>
+    <label>Départ <input type="datetime-local" name="clock_out"></label>
+    <label>Note <input type="text" name="note" maxlength="200" placeholder="ex: punch manqué le 12"></label>
+    <button class="btn primary" type="submit">Ajouter</button>
+  </form>
 </div>
 <%- include('_foot') %>

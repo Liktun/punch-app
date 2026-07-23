@@ -15,17 +15,19 @@
 
   <table>
     <thead>
-      <tr><th>Employé</th><th>Quarts</th><th>Heures</th><th></th></tr>
+      <tr><th>Employé</th><th>Quarts</th><th>Régulières</th><th>Supp.</th><th>Net</th><th></th></tr>
     </thead>
     <tbody>
       <% if (report.length === 0) { %>
-        <tr><td colspan="4" class="muted">Aucun employé actif.</td></tr>
+        <tr><td colspan="6" class="muted">Aucun employé actif.</td></tr>
       <% } %>
       <% report.forEach((r) => { %>
         <tr>
           <td><%= r.name %> <span class="muted">(<%= r.username %>)</span></td>
           <td><%= r.shifts %><% if (r.openCount) { %> <span class="badge in tiny"><%= r.openCount %> en cours</span><% } %></td>
-          <td><strong><%= r.hours %></strong></td>
+          <td><%= r.regular %></td>
+          <td><% if (r.hasOt) { %><span class="ot-val"><%= r.overtime %></span><% } else { %><span class="muted">—</span><% } %></td>
+          <td><strong><%= r.net %></strong></td>
           <td><a class="link" href="/admin/employee/<%= r.id %>?p=<%= offset %>">Détail</a></td>
         </tr>
       <% }) %>
@@ -35,11 +37,14 @@
         <tr class="grand">
           <td><strong>Total de la période</strong></td>
           <td></td>
-          <td><strong><%= grandTotal %></strong></td>
+          <td><strong><%= grandReg %></strong></td>
+          <td><strong class="ot-val"><%= grandOt %></strong></td>
+          <td><strong><%= grandNet %></strong></td>
           <td></td>
         </tr>
       </tfoot>
     <% } %>
   </table>
+  <p class="muted small">Heures supp. = au-delà de 40h/semaine (taux <%= otRate %>×). Pauses déduites automatiquement sur les longs quarts.</p>
 </div>
 <%- include('_foot') %>

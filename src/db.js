@@ -36,4 +36,15 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_punches_open     ON punches(employee_id) WHERE clock_out IS NULL;
 `);
 
+// ---- Lightweight migrations (add columns if missing) ----
+function columnExists(table, col) {
+  return db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === col);
+}
+if (!columnExists('punches', 'edited_by_admin')) {
+  db.exec("ALTER TABLE punches ADD COLUMN edited_by_admin INTEGER NOT NULL DEFAULT 0");
+}
+if (!columnExists('punches', 'note')) {
+  db.exec("ALTER TABLE punches ADD COLUMN note TEXT");
+}
+
 export default db;

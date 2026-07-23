@@ -26,7 +26,14 @@
 
   <div class="period-box">
     <span>Période courante : <strong><%= periodLabel %></strong></span>
-    <span class="total">Total : <strong><%= periodTotal %></strong></span>
+    <span class="total">Total net : <strong><%= periodNet %></strong></span>
+  </div>
+  <div class="stat-grid">
+    <div class="stat"><span class="stat-label">Régulières</span><span class="stat-val"><%= periodRegular %></span></div>
+    <% if (hasOvertime) { %>
+    <div class="stat ot"><span class="stat-label">Heures supp.</span><span class="stat-val"><%= periodOvertime %></span></div>
+    <% } %>
+    <div class="stat"><span class="stat-label">Pauses déduites</span><span class="stat-val"><%= periodBreak %></span></div>
   </div>
 </div>
 
