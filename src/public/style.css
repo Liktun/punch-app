@@ -53,3 +53,9 @@ th { color: var(--muted); font-weight: 600; }
 .flash.err { background: rgba(255,92,108,.15); color: var(--danger); }
 .foot { text-align: center; color: var(--muted); font-size: .8rem; padding: 20px; }
 [aria-disabled=true] { opacity: .4; pointer-events: none; }
+.clock { text-align: center; font-size: 2.2rem; font-variant-numeric: tabular-nums;
+  letter-spacing: 2px; color: var(--ink); margin: 6px 0 14px; }
+.ticker { font-weight: 700; color: var(--ok); font-variant-numeric: tabular-nums; }
+.badge.in .ticker { color: var(--ok); }
+tfoot .grand td { border-top: 2px solid var(--line); font-size: 1rem; }
+tfoot .grand td strong { color: var(--ok); }

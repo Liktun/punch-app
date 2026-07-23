@@ -5,7 +5,9 @@ import BetterSqlite3Store from 'better-sqlite3-session-store';
 import Database from 'better-sqlite3';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import compression from 'compression';
 import bcrypt from 'bcryptjs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
@@ -32,8 +34,12 @@ app.use(helmet({
     },
   },
 }));
+app.use(compression()); // gzip responses (Phase 5)
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '7d',           // cache static assets in the browser
+  etag: true,
+}));
 
 const SqliteStore = BetterSqlite3Store(session);
 const sessDir = path.dirname(process.env.DB_PATH || './data/punch.sqlite');
@@ -52,6 +58,24 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 8, // 8h
   },
 }));
+
+// ---- CSRF protection (double-submit token in session) ----
+// Lightweight, no extra dependency: token stored in session, injected into forms,
+// verified on every state-changing POST.
+app.use((req, res, next) => {
+  if (!req.session.csrf) {
+    req.session.csrf = crypto.randomBytes(24).toString('hex');
+  }
+  res.locals.csrf = req.session.csrf;
+  next();
+});
+function verifyCsrf(req, res, next) {
+  const token = req.body?._csrf;
+  if (!token || token !== req.session.csrf) {
+    return res.status(403).render('error', { message: 'Jeton de sécurité invalide. Recharge la page et réessaie.' });
+  }
+  next();
+}
 
 // ---- Rate limiting on auth to slow brute force ----
 const loginLimiter = rateLimit({
@@ -79,6 +103,23 @@ const q = {
   ),
   allActiveEmployees: db.prepare('SELECT * FROM employees WHERE active = 1 ORDER BY full_name'),
   allEmployees: db.prepare('SELECT * FROM employees ORDER BY active DESC, full_name'),
+  // Phase 5: single grouped query for the whole report instead of one query per employee (kills N+1).
+  // Computes worked seconds (closed shifts) + open-shift count per active non-admin employee for a period.
+  reportForPeriod: db.prepare(`
+    SELECT e.id, e.full_name, e.username,
+           COUNT(p.id)                                         AS shifts,
+           COALESCE(SUM(CASE WHEN p.clock_out IS NOT NULL
+                 THEN MAX(strftime('%s', p.clock_out) - strftime('%s', p.clock_in), 0)
+                 ELSE 0 END), 0)                               AS worked_sec,
+           COALESCE(SUM(CASE WHEN p.clock_out IS NULL THEN 1 ELSE 0 END), 0) AS open_count
+    FROM employees e
+    LEFT JOIN punches p
+      ON p.employee_id = e.id
+     AND p.clock_in >= ? AND p.clock_in < ?
+    WHERE e.active = 1 AND e.is_admin = 0
+    GROUP BY e.id
+    ORDER BY e.full_name
+  `),
   insertEmployee: db.prepare(
     'INSERT INTO employees (username, full_name, password_hash, is_admin, active) VALUES (?, ?, ?, 0, 1)'
   ),
@@ -139,7 +180,7 @@ app.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
-app.post('/login', loginLimiter, (req, res) => {
+app.post('/login', loginLimiter, verifyCsrf, (req, res) => {
   const username = String(req.body.username || '').trim().toLowerCase();
   const password = String(req.body.password || '');
   if (!username || !password) {
@@ -155,11 +196,12 @@ app.post('/login', loginLimiter, (req, res) => {
   req.session.regenerate((err) => {
     if (err) return res.status(500).render('login', { error: 'Erreur de session.' });
     req.session.uid = user.id;
+    req.session.csrf = crypto.randomBytes(24).toString('hex'); // fresh token after regenerate
     res.redirect(user.is_admin ? '/admin' : '/dashboard');
   });
 });
 
-app.post('/logout', requireAuth, (req, res) => {
+app.post('/logout', requireAuth, verifyCsrf, (req, res) => {
   req.session.destroy(() => res.redirect('/login'));
 });
 
@@ -184,7 +226,7 @@ app.get('/dashboard', requireAuth, (req, res) => {
   req.session.flash = null;
 });
 
-app.post('/punch/in', requireAuth, (req, res) => {
+app.post('/punch/in', requireAuth, verifyCsrf, (req, res) => {
   if (req.user.is_admin) return res.redirect('/admin');
   const open = q.openPunch.get(req.user.id);
   if (open) {
@@ -196,7 +238,7 @@ app.post('/punch/in', requireAuth, (req, res) => {
   res.redirect('/dashboard');
 });
 
-app.post('/punch/out', requireAuth, (req, res) => {
+app.post('/punch/out', requireAuth, verifyCsrf, (req, res) => {
   if (req.user.is_admin) return res.redirect('/admin');
   const open = q.openPunch.get(req.user.id);
   if (!open) {
@@ -209,20 +251,22 @@ app.post('/punch/out', requireAuth, (req, res) => {
 });
 
 // Admin: totals per employee for a selected pay period.
+// Phase 5: one grouped SQL query for the whole report (no N+1).
 app.get('/admin', requireAuth, requireAdmin, (req, res) => {
   const offset = parseInt(req.query.p || '0', 10) || 0;
   const period = periodByOffset(offset);
-  const employees = q.allActiveEmployees.all().filter((e) => !e.is_admin);
-  const report = employees.map((e) => {
-    const punches = q.punchesForEmpInRange.all(e.id, period.start.toISOString(), period.end.toISOString());
-    const s = summarize(punches);
+  const rows = q.reportForPeriod.all(period.start.toISOString(), period.end.toISOString());
+  let grandMs = 0;
+  const report = rows.map((r) => {
+    const ms = r.worked_sec * 1000;
+    grandMs += ms;
     return {
-      id: e.id,
-      name: e.full_name,
-      username: e.username,
-      hours: fmtHours(s.totalMs),
-      openCount: s.openCount,
-      shifts: s.rows.length,
+      id: r.id,
+      name: r.full_name,
+      username: r.username,
+      hours: fmtHours(ms),
+      openCount: r.open_count,
+      shifts: r.shifts,
     };
   });
   res.render('admin', {
@@ -231,6 +275,7 @@ app.get('/admin', requireAuth, requireAdmin, (req, res) => {
     periodLabel: periodLabel(period),
     offset,
     report,
+    grandTotal: fmtHours(grandMs),
     flash: req.session.flash || null,
   });
   req.session.flash = null;
@@ -268,7 +313,7 @@ app.get('/admin/employees', requireAuth, requireAdmin, (req, res) => {
   req.session.flash = null;
 });
 
-app.post('/admin/employees', requireAuth, requireAdmin, (req, res) => {
+app.post('/admin/employees', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
   const username = String(req.body.username || '').trim().toLowerCase();
   const fullName = String(req.body.full_name || '').trim();
   const password = String(req.body.password || '');
@@ -289,7 +334,7 @@ app.post('/admin/employees', requireAuth, requireAdmin, (req, res) => {
   res.redirect('/admin/employees');
 });
 
-app.post('/admin/employees/:id/toggle', requireAuth, requireAdmin, (req, res) => {
+app.post('/admin/employees/:id/toggle', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
   const emp = q.userById.get(parseInt(req.params.id, 10));
   if (emp && !emp.is_admin) q.setActive.run(emp.active ? 0 : 1, emp.id);
   req.session.flash = { type: 'ok', msg: 'Statut mis à jour.' };

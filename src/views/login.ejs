@@ -3,6 +3,7 @@
   <h1>Connexion</h1>
   <% if (error) { %><div class="flash err"><%= error %></div><% } %>
   <form action="/login" method="post" autocomplete="off">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
     <label>Nom d'utilisateur
       <input name="username" type="text" required autofocus maxlength="32">
     </label>

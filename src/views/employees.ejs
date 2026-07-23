@@ -15,6 +15,7 @@
           <td>
             <% if (!e.is_admin) { %>
               <form action="/admin/employees/<%= e.id %>/toggle" method="post" class="inline">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
                 <button class="btn ghost small"><%= e.active ? 'Désactiver' : 'Réactiver' %></button>
               </form>
             <% } %>
@@ -28,6 +29,7 @@
 <div class="card narrow">
   <h2>Ajouter un employé</h2>
   <form action="/admin/employees" method="post" autocomplete="off">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
     <label>Nom complet <input name="full_name" required maxlength="80"></label>
     <label>Nom d'utilisateur <input name="username" required maxlength="32" pattern="[a-zA-Z0-9._-]{3,32}"></label>
     <label>Mot de passe (min. 8) <input name="password" type="password" required minlength="8" maxlength="200"></label>

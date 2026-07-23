@@ -3,15 +3,22 @@
   <h1>Bonjour, <%= user.full_name %></h1>
   <% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %>"><%= flash.msg %></div><% } %>
 
+  <div class="clock" id="clock" data-now="<%= Date.now() %>">--:--:--</div>
+
   <div class="status">
     <% if (open) { %>
-      <p class="badge in">Quart en cours depuis <strong><%= fmtTime(open.clock_in) %></strong></p>
-      <form action="/punch/out" method="post">
+      <p class="badge in">
+        Quart en cours depuis <strong><%= fmtTime(open.clock_in) %></strong><br>
+        <span class="ticker" id="ticker" data-start="<%= new Date(open.clock_in).getTime() %>">0h00</span> travaillées
+      </p>
+      <form action="/punch/out" method="post" onsubmit="return confirm('Confirmer ton départ ?');">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
         <button class="btn danger big" type="submit">Puncher mon départ</button>
       </form>
     <% } else { %>
       <p class="badge out">Aucun quart en cours</p>
-      <form action="/punch/in" method="post">
+      <form action="/punch/in" method="post" onsubmit="return confirm('Confirmer ton arrivée ?');">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
         <button class="btn primary big" type="submit">Puncher mon arrivée</button>
       </form>
     <% } %>
@@ -41,4 +48,5 @@
     </tbody>
   </table>
 </div>
+<script src="/dashboard.js"></script>
 <%- include('_foot') %>
