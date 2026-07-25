@@ -338,8 +338,15 @@ tfoot .grand td strong { color: var(--total-color, var(--ink)); }
   font-family: var(--mono); font-size: 11px; letter-spacing: .06em;
   text-align: center; padding: 9px 14px;
   background: var(--accent); color: var(--accent-ink);
+  position: sticky; top: 0; z-index: 30;
 }
 .preview-banner b { font-weight: 600; }
+/* The theme bar sits under the banner on every preview screen. */
+.preview-tools { padding-top: 20px; padding-bottom: 0; }
+/* Landing in preview mode: normal document flow instead of full-height centring,
+   so the toolbar stays visible above it. */
+.preview-page { min-height: 100vh; }
+.preview-page .landing { margin: 0 auto; padding: 40px 24px 80px; }
 
 /* ---- Footer ---- */
 .foot {

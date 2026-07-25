@@ -1,4 +1,7 @@
-<%# Admin-only theme selector + screen previews. Applies app-wide for everyone. %>
+<%# Admin-only theme selector + screen previews. Applies app-wide for everyone.
+    `screen` marks which preview is currently shown so the bar stays in place
+    and simply highlights the active screen. %>
+<% const cur = typeof screen !== 'undefined' ? screen : 'admin'; %>
 <div class="theme-bar">
   <div class="theme-bar-head">
     <span class="theme-bar-title">Thème de l'application</span>
@@ -12,9 +15,9 @@
       <form action="/admin/theme" method="post">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
         <input type="hidden" name="theme" value="<%= t.id %>">
-        <input type="hidden" name="back" value="<%= typeof themeBack !== 'undefined' ? themeBack : 'admin' %>">
+        <input type="hidden" name="back" value="<%= cur %>">
         <button class="theme-opt" type="submit" title="<%= t.hint %>"
-          <%= t.id === theme ? 'aria-current="true"' : '' %>><%= t.label %></button>
+          <%- t.id === theme ? 'aria-current="true"' : '' %>><%= t.label %></button>
       </form>
     <% }) %>
   </div>
@@ -22,10 +25,10 @@
   <div class="theme-bar-screens">
     <span class="theme-bar-title">Aperçu des écrans</span>
     <div class="screen-list">
-      <a class="screen-opt" href="/?preview=1" target="_blank" rel="noopener">Accueil</a>
-      <a class="screen-opt" href="/preview/login" target="_blank" rel="noopener">Connexion</a>
-      <a class="screen-opt" href="/preview/dashboard" target="_blank" rel="noopener">Employé</a>
-      <a class="screen-opt" href="/admin" aria-current="true">Admin</a>
+      <a class="screen-opt" href="/preview/landing"   <%- cur === 'landing'   ? 'aria-current="true"' : '' %>>Accueil</a>
+      <a class="screen-opt" href="/preview/login"     <%- cur === 'login'     ? 'aria-current="true"' : '' %>>Connexion</a>
+      <a class="screen-opt" href="/preview/dashboard" <%- cur === 'dashboard' ? 'aria-current="true"' : '' %>>Employé</a>
+      <a class="screen-opt" href="/admin"             <%- cur === 'admin'     ? 'aria-current="true"' : '' %>>Admin</a>
     </div>
   </div>
 </div>

@@ -526,8 +526,11 @@ app.get('/preview/:screen', requireAuth, requireAdmin, (req, res) => {
   const now = new Date();
   const startedAt = new Date(now.getTime() - 6 * 3600_000 - 2 * 60_000);
 
+  if (screen === 'landing') {
+    return res.render('landing', { preview: true, screen, user: req.user });
+  }
   if (screen === 'login') {
-    return res.render('login', { error: null, preview: true });
+    return res.render('login', { error: null, preview: true, screen, user: req.user });
   }
   if (screen === 'dashboard') {
     const mk = (h1, m1, h2, m2) => {
@@ -539,7 +542,8 @@ app.get('/preview/:screen', requireAuth, requireAdmin, (req, res) => {
     return res.render('dashboard', {
       user: { full_name: 'Marie Tremblay', is_admin: 0 },
       wrapClass: 'dash',
-      preview: true,
+      preview: true, screen,
+      admin: req.user,
       open: { id: 0, clock_in: startedAt.toISOString() },
       openBreak: null,
       periodLabel: periodLabel(periodFor(now)),
@@ -556,7 +560,14 @@ app.get('/preview/:screen', requireAuth, requireAdmin, (req, res) => {
 // Admin: change the app-wide visual theme.
 app.post('/admin/theme', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
   const id = String(req.body.theme || '');
-  const back = req.body.back === 'employees' ? '/admin/employees' : '/admin';
+  // Come back to whichever screen the admin was looking at.
+  const backMap = {
+    employees: '/admin/employees',
+    landing: '/preview/landing',
+    login: '/preview/login',
+    dashboard: '/preview/dashboard',
+  };
+  const back = backMap[req.body.back] || '/admin';
   if (!setTheme(id)) {
     req.session.flash = { type: 'warn', msg: 'Thème inconnu.' };
     return res.redirect(back);

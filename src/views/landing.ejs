@@ -7,7 +7,12 @@
   <link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
   <link rel="stylesheet" href="/base.css?v=<%= assetVer %>">
 </head>
-<body class="landing-body">
+<body class="<%= (typeof preview !== 'undefined' && preview) ? 'preview-page' : 'landing-body' %>">
+  <% if (typeof preview !== 'undefined' && preview) { %>
+    <div class="preview-banner">Aperçu — cet écran est une démonstration</div>
+    <div class="wrap preview-tools"><%- include('_themebar') %></div>
+  <% } %>
+
   <main class="landing">
     <p class="kicker">Gestion des heures · beta</p>
     <h1>Point<em>o</em></h1>

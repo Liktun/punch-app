@@ -27,8 +27,7 @@
   </nav>
 </header>
 <% if (typeof preview !== 'undefined' && preview) { %>
-<div class="preview-banner">
-  Aperçu · thème <b><%= (themes.find((t) => t.id === theme) || {}).label %></b> — cet écran est une démonstration
-</div>
+<div class="preview-banner">Aperçu — cet écran est une démonstration</div>
+<div class="wrap preview-tools"><%- include('_themebar') %></div>
 <% } %>
 <main class="wrap <%= typeof wrapClass !== 'undefined' ? wrapClass : '' %>">
