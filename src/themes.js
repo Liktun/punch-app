@@ -7,7 +7,7 @@ export const THEMES = [
   { id: 'editorial', label: 'Éditorial', hint: 'Papier chaud, serif, accent rouge' },
   { id: 'kronos',    label: 'Kronos',    hint: 'Obsidienne et or, sombre premium' },
   { id: 'landscape', label: 'Landscape', hint: 'Paysage naturel, palette terreuse' },
-  { id: 'aurora',    label: 'Aurora',    hint: 'UI claire, indigo et violet' },
+  { id: 'atelier',   label: 'Atelier',   hint: 'Émail industriel cobalt, plaques boulonnées' },
   { id: 'terminal',  label: 'Terminal',  hint: 'Terminal sombre, vert phosphore' },
   { id: 'artifact',  label: 'Artifact',  hint: 'Rouge monochrome, contraste fort' },
   { id: 'cosmos',    label: 'Cosmos',    hint: 'Noir et blanc, spatial' },

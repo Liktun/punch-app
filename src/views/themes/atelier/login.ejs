@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion — Pointo</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body>
+<%- include('../../_themebar_wrap') %>
+<header class="topbar"><div class="topbar-in">
+  <a class="brand" href="/">Point<em>o</em></a>
+  <nav><a href="/login">Connexion</a></nav>
+</div></header>
+
+<main class="wrap">
+  <div class="login-wrap">
+    <div class="card login-card">
+      <p class="login-logo">Accès employé</p>
+      <h1>Connexion</h1>
+      <p class="login-sub">Entre tes identifiants pour puncher.</p>
+      <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+      <form action="/login" method="post" autocomplete="off">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <label for="username">Nom d'utilisateur</label>
+        <input id="username" name="username" type="text" required autofocus maxlength="32" autocapitalize="none">
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" required maxlength="200">
+        <button class="btn primary big" type="submit" style="margin-top:22px;">Se connecter</button>
+      </form>
+    </div>
+  </div>
+</main>
+<footer class="foot">Pointo beta · heures calculées par période de paie bi-hebdomadaire</footer>
+</body>
+</html>
