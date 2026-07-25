@@ -29,7 +29,7 @@ a { color:inherit; }
 .svg-ico { width:1em; height:1em; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; vertical-align:-.12em; }
 
 .wrap { max-width:900px; margin:0 auto; padding:30px 20px 90px; }
-.topbar { position:sticky; top:52px; z-index:20; background:rgba(13,11,12,.78); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
+.topbar { position:sticky; top:0; z-index:20; background:rgba(13,11,12,.78); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
 .topbar-in { max-width:900px; margin:0 auto; padding:13px 20px; display:flex; align-items:center; gap:16px; }
 .brand { font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:.02em; text-transform:uppercase; text-decoration:none; display:inline-flex; align-items:center; gap:9px; }
 .brand .mark { width:14px; height:14px; border-radius:50%; background:var(--red); box-shadow:0 0 14px var(--red-glow); flex:none; }

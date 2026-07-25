@@ -21,7 +21,7 @@ a { color:inherit; }
 
 .wrap { max-width:760px; margin:0 auto; padding:28px 20px 80px; }
 .topbar {
-  position:sticky; top:52px; z-index:20; background:color-mix(in srgb,var(--paper) 90%,transparent);
+  position:sticky; top:0; z-index:20; background:color-mix(in srgb,var(--paper) 90%,transparent);
   backdrop-filter:blur(8px); border-bottom:1px solid var(--line-strong);
 }
 .topbar-in { max-width:760px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:16px; }

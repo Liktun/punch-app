@@ -64,19 +64,26 @@
 .theme-bar .theme-opt:hover,
 .theme-bar .screen-opt:hover { opacity: 1; border-color: currentColor; }
 
-.theme-bar .theme-opt[aria-current="true"] {
-  background: var(--tb-accent);
-  border-color: var(--tb-accent);
-  color: var(--tb-accent-ink);
-  opacity: 1;
-  font-weight: 700;
-}
+/* Selected state: a translucent wash of the theme's accent. Works on light and
+   dark grounds alike, and keeps the label readable instead of inverting to a
+   flat black/white block. */
+.theme-bar .theme-opt[aria-current="true"],
 .theme-bar .screen-opt[aria-current="true"] {
-  background: var(--tb-ink);
-  border-color: var(--tb-ink);
-  color: var(--paper, #0f1220);
+  background: color-mix(in srgb, var(--tb-accent) 22%, transparent);
+  border-color: color-mix(in srgb, var(--tb-accent) 65%, transparent);
+  color: var(--tb-accent);
   opacity: 1;
   font-weight: 700;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tb-accent) 18%, transparent);
+}
+/* Fallback for engines without color-mix(). */
+@supports not (background: color-mix(in srgb, red 20%, transparent)) {
+  .theme-bar .theme-opt[aria-current="true"],
+  .theme-bar .screen-opt[aria-current="true"] {
+    background: rgba(79, 140, 255, .18);
+    border-color: var(--tb-accent);
+    color: var(--tb-accent);
+  }
 }
 
 .theme-bar-screens {

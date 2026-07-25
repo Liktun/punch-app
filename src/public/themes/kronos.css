@@ -35,7 +35,7 @@ a { color:inherit; }
 .mono { font-family:var(--mono); }
 
 .wrap { max-width:780px; margin:0 auto; padding:30px 20px 90px; }
-.topbar { position:sticky; top:52px; z-index:20; background:rgba(8,6,17,.72); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+.topbar { position:sticky; top:0; z-index:20; background:rgba(8,6,17,.72); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
 .topbar-in { max-width:780px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:16px; }
 .brand { font-family:var(--display); font-weight:700; font-size:18px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-bright); text-decoration:none; }
 .topbar nav { margin-left:auto; display:flex; align-items:center; gap:16px; }
