@@ -29,7 +29,9 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      // Google Fonts are used by the /themes gallery mockups.
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
       scriptSrc: ["'self'"],
       imgSrc: ["'self'", 'data:'],
     },
@@ -40,6 +42,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: '7d',           // cache static assets in the browser
   etag: true,
+}));
+
+// Frontend theme gallery (static mockups of the 7 redesign directions).
+// Browse at /themes — each page carries its own switcher to jump between them.
+app.use('/themes', express.static(path.join(__dirname, '..', 'revamp'), {
+  maxAge: '1h',
+  etag: true,
+  extensions: ['html'],
 }));
 
 // Cache-busting version for static assets (mtime of style.css). Injected into <link>
@@ -119,6 +129,28 @@ const q = {
   recentPunches: db.prepare(
     `SELECT * FROM punches WHERE employee_id = ? ORDER BY clock_in DESC LIMIT 10`
   ),
+  // ---- Breaks (punched explicitly by the employee) ----
+  openBreak: db.prepare(
+    'SELECT * FROM breaks WHERE punch_id = ? AND break_out IS NULL ORDER BY break_in DESC LIMIT 1'
+  ),
+  insertBreak: db.prepare('INSERT INTO breaks (punch_id, break_in) VALUES (?, ?)'),
+  closeBreak: db.prepare('UPDATE breaks SET break_out = ? WHERE id = ? AND break_out IS NULL'),
+  breaksForPunch: db.prepare('SELECT * FROM breaks WHERE punch_id = ? ORDER BY break_in ASC'),
+  // All breaks for a set of punches in one query (no N+1).
+  breaksForEmpInRange: db.prepare(
+    `SELECT b.* FROM breaks b
+     JOIN punches p ON p.id = b.punch_id
+     WHERE p.employee_id = ? AND p.clock_in >= ? AND p.clock_in < ?
+     ORDER BY b.break_in ASC`
+  ),
+  breaksInRange: db.prepare(
+    `SELECT b.* FROM breaks b
+     JOIN punches p ON p.id = b.punch_id
+     JOIN employees e ON e.id = p.employee_id
+     WHERE e.active = 1 AND e.is_admin = 0
+       AND p.clock_in >= ? AND p.clock_in < ?
+     ORDER BY b.break_in ASC`
+  ),
   allActiveEmployees: db.prepare('SELECT * FROM employees WHERE active = 1 AND is_admin = 0 ORDER BY full_name'),
   allEmployees: db.prepare('SELECT * FROM employees ORDER BY active DESC, full_name'),
   insertEmployee: db.prepare(
@@ -157,6 +189,16 @@ function requireAdmin(req, res, next) {
 
 // ---- Helpers ----
 const fmtHours = fmtHoursH; // from hours.js (single source of truth)
+
+// Attach each punch's breaks (from a flat list) so hours math can use them.
+function withBreaks(punches, breakRows) {
+  const byPunch = new Map();
+  for (const b of breakRows) {
+    if (!byPunch.has(b.punch_id)) byPunch.set(b.punch_id, []);
+    byPunch.get(b.punch_id).push(b);
+  }
+  return punches.map((p) => ({ ...p, breaks: byPunch.get(p.id) || [] }));
+}
 
 // Build per-row detail (gross/break/net) + totals for a set of punches.
 function detailRows(punches) {
@@ -236,13 +278,18 @@ app.get('/dashboard', requireAuth, (req, res) => {
   if (req.user.is_admin) return res.redirect('/admin');
   const open = q.openPunch.get(req.user.id);
   const period = periodFor(new Date());
-  const punches = q.punchesForEmpInRange.all(req.user.id, period.start.toISOString(), period.end.toISOString());
+  const rawPunches = q.punchesForEmpInRange.all(req.user.id, period.start.toISOString(), period.end.toISOString());
+  const breakRows = q.breaksForEmpInRange.all(req.user.id, period.start.toISOString(), period.end.toISOString());
+  const punches = withBreaks(rawPunches, breakRows);
   const agg = aggregate(punches);
   const recent = q.recentPunches.all(req.user.id);
+  // Break currently in progress on the open shift (if any).
+  const openBreak = open ? q.openBreak.get(open.id) : null;
   res.render('dashboard', {
     user: req.user,
     wrapClass: 'dash',
     open,
+    openBreak,
     periodLabel: periodLabel(period),
     periodNet: fmtHours(agg.netMs),
     periodRegular: fmtHours(agg.regularMs),
@@ -279,8 +326,46 @@ app.post('/punch/out', requireAuth, verifyCsrf, (req, res) => {
     req.session.flash = { type: 'warn', msg: 'Aucun quart en cours à fermer.' };
     return res.redirect('/dashboard');
   }
+  // Refuse to close a shift while a break is still running: the employee must
+  // punch out of their break first, otherwise the break duration is undefined.
+  const runningBreak = q.openBreak.get(open.id);
+  if (runningBreak) {
+    req.session.flash = { type: 'warn', msg: 'Termine ta pause avant de puncher ton départ.' };
+    return res.redirect('/dashboard');
+  }
   q.closePunch.run(new Date().toISOString(), open.id);
   req.session.flash = { type: 'ok', msg: 'Départ enregistré.' };
+  res.redirect('/dashboard');
+});
+
+// Start a break on the currently open shift.
+app.post('/break/in', requireAuth, verifyCsrf, (req, res) => {
+  if (req.user.is_admin) return res.redirect('/admin');
+  const open = q.openPunch.get(req.user.id);
+  if (!open) {
+    req.session.flash = { type: 'warn', msg: 'Aucun quart en cours : impossible de commencer une pause.' };
+    return res.redirect('/dashboard');
+  }
+  if (q.openBreak.get(open.id)) {
+    req.session.flash = { type: 'warn', msg: 'Une pause est déjà en cours.' };
+    return res.redirect('/dashboard');
+  }
+  q.insertBreak.run(open.id, new Date().toISOString());
+  req.session.flash = { type: 'ok', msg: 'Début de pause enregistré.' };
+  res.redirect('/dashboard');
+});
+
+// End the break in progress.
+app.post('/break/out', requireAuth, verifyCsrf, (req, res) => {
+  if (req.user.is_admin) return res.redirect('/admin');
+  const open = q.openPunch.get(req.user.id);
+  const running = open ? q.openBreak.get(open.id) : null;
+  if (!running) {
+    req.session.flash = { type: 'warn', msg: 'Aucune pause en cours.' };
+    return res.redirect('/dashboard');
+  }
+  q.closeBreak.run(new Date().toISOString(), running.id);
+  req.session.flash = { type: 'ok', msg: 'Fin de pause enregistrée.' };
   res.redirect('/dashboard');
 });
 
@@ -290,7 +375,9 @@ app.get('/admin', requireAuth, requireAdmin, (req, res) => {
   const offset = parseInt(req.query.p || '0', 10) || 0;
   const period = periodByOffset(offset);
   const employees = q.allActiveEmployees.all();
-  const allPunches = q.punchesInRange.all(period.start.toISOString(), period.end.toISOString());
+  const rawPunches = q.punchesInRange.all(period.start.toISOString(), period.end.toISOString());
+  const allBreaks = q.breaksInRange.all(period.start.toISOString(), period.end.toISOString());
+  const allPunches = withBreaks(rawPunches, allBreaks);
   const byEmp = new Map();
   for (const p of allPunches) {
     if (!byEmp.has(p.employee_id)) byEmp.set(p.employee_id, []);
@@ -333,7 +420,9 @@ app.get('/admin/employee/:id', requireAuth, requireAdmin, (req, res) => {
   if (!emp) return res.status(404).render('error', { message: 'Employé introuvable.' });
   const offset = parseInt(req.query.p || '0', 10) || 0;
   const period = periodByOffset(offset);
-  const punches = q.punchesForEmpInRange.all(emp.id, period.start.toISOString(), period.end.toISOString());
+  const rawPunches = q.punchesForEmpInRange.all(emp.id, period.start.toISOString(), period.end.toISOString());
+  const empBreaks = q.breaksForEmpInRange.all(emp.id, period.start.toISOString(), period.end.toISOString());
+  const punches = withBreaks(rawPunches, empBreaks);
   const agg = aggregate(punches);
   res.render('employee_detail', {
     user: req.user,

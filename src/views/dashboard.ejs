@@ -9,20 +9,43 @@
     <div class="clock-big" id="clock">--:--:--</div>
 
     <% if (open) { %>
-      <div class="shift-state">
-        <span class="live-dot"></span>
-        <span>Quart en cours</span>
-      </div>
-      <div class="worked-now">
-        <span class="worked-val" id="ticker" data-start="<%= new Date(open.clock_in).getTime() %>">0h00</span>
-        <span class="worked-label">depuis <%= fmtTimeOnly(open.clock_in) %></span>
-      </div>
-      <form action="/punch/out" method="post" onsubmit="return confirm('Confirmer ton départ ?');">
-        <input type="hidden" name="_csrf" value="<%= csrf %>">
-        <button class="punch-btn out" type="submit">
-          <span class="punch-btn-icon">■</span> Punch out
-        </button>
-      </form>
+      <% if (openBreak) { %>
+        <div class="shift-state on-break">
+          <span class="live-dot break"></span>
+          <span>En pause</span>
+        </div>
+        <div class="worked-now">
+          <span class="worked-val break" id="breakTicker" data-start="<%= new Date(openBreak.break_in).getTime() %>">0h00</span>
+          <span class="worked-label">pause depuis <%= fmtTimeOnly(openBreak.break_in) %></span>
+        </div>
+        <form action="/break/out" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="punch-btn resume" type="submit">
+            <span class="punch-btn-icon">▶</span> Reprendre le travail
+          </button>
+        </form>
+      <% } else { %>
+        <div class="shift-state">
+          <span class="live-dot"></span>
+          <span>Quart en cours</span>
+        </div>
+        <div class="worked-now">
+          <span class="worked-val" id="ticker" data-start="<%= new Date(open.clock_in).getTime() %>">0h00</span>
+          <span class="worked-label">depuis <%= fmtTimeOnly(open.clock_in) %></span>
+        </div>
+        <form action="/break/in" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="punch-btn pause" type="submit">
+            <span class="punch-btn-icon">❙❙</span> Punch pause
+          </button>
+        </form>
+        <form action="/punch/out" method="post" onsubmit="return confirm('Confirmer ton départ ?');">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="punch-btn out" type="submit">
+            <span class="punch-btn-icon">■</span> Punch out
+          </button>
+        </form>
+      <% } %>
     <% } else { %>
       <div class="shift-state idle">
         <span>Prêt à commencer</span>
@@ -52,7 +75,7 @@
   <div class="chips">
     <span class="chip"><span class="chip-dot reg"></span><%= periodRegular %> régulières</span>
     <% if (hasOvertime) { %><span class="chip"><span class="chip-dot ot"></span><%= periodOvertime %> supp.</span><% } %>
-    <% if (periodBreak !== '0h00') { %><span class="chip"><span class="chip-dot brk"></span><%= periodBreak %> pauses</span><% } %>
+    <span class="chip"><span class="chip-dot brk"></span><%= periodBreak %> pauses</span>
     <span class="chip muted-chip"><%= periodShifts %> quart<%= periodShifts > 1 ? 's' : '' %></span>
   </div>
 </section>

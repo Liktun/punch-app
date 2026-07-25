@@ -1,8 +1,6 @@
 // Worked-hours math: per-shift break deduction + weekly overtime split.
 // Kept pure & unit-testable; no DB access here.
 
-const BREAK_THRESHOLD_MIN = parseInt(process.env.BREAK_THRESHOLD_MIN || '360', 10);
-const BREAK_DEDUCTION_MIN = parseInt(process.env.BREAK_DEDUCTION_MIN || '30', 10);
 const OT_WEEKLY_HOURS = parseFloat(process.env.OVERTIME_WEEKLY_HOURS || '40');
 export const OT_RATE = parseFloat(process.env.OVERTIME_RATE || '1.5');
 
@@ -10,19 +8,43 @@ const MS_PER_MIN = 60_000;
 const MS_PER_HOUR = 3_600_000;
 
 /**
- * Net worked ms for one shift after auto break deduction.
+ * Total ms of the breaks punched during a shift.
+ * A break still in progress (no break_out) counts as 0 until it is closed.
+ * Durations are clamped to the shift window so an out-of-range correction can
+ * never push net time negative.
+ * @param {Array<{break_in:string, break_out:string|null}>} breaks
+ * @param {number} shiftStart epoch ms
+ * @param {number} shiftEnd epoch ms
+ */
+export function breaksTotal(breaks, shiftStart, shiftEnd) {
+  if (!breaks || !breaks.length) return 0;
+  let total = 0;
+  for (const b of breaks) {
+    if (!b.break_out) continue; // open break: not counted yet
+    let start = new Date(b.break_in).getTime();
+    let end = new Date(b.break_out).getTime();
+    if (!(end > start)) continue; // skew / invalid guard
+    // Clamp into the shift so totals stay consistent.
+    if (Number.isFinite(shiftStart)) start = Math.max(start, shiftStart);
+    if (Number.isFinite(shiftEnd)) end = Math.min(end, shiftEnd);
+    if (end > start) total += end - start;
+  }
+  return total;
+}
+
+/**
+ * Net worked ms for one shift = gross minus the breaks the employee punched.
  * Open shifts (no clock_out) return 0 and are reported separately.
- * @param {{clock_in:string, clock_out:string|null}} p
+ * @param {{clock_in:string, clock_out:string|null, breaks?:Array}} p
  * @returns {{grossMs:number, breakMs:number, netMs:number, open:boolean}}
  */
 export function shiftNet(p) {
   if (!p.clock_out) return { grossMs: 0, breakMs: 0, netMs: 0, open: true };
-  let gross = new Date(p.clock_out).getTime() - new Date(p.clock_in).getTime();
+  const start = new Date(p.clock_in).getTime();
+  const end = new Date(p.clock_out).getTime();
+  let gross = end - start;
   if (gross < 0) gross = 0; // clock skew guard
-  let breakMs = 0;
-  if (BREAK_DEDUCTION_MIN > 0 && gross > BREAK_THRESHOLD_MIN * MS_PER_MIN) {
-    breakMs = Math.min(BREAK_DEDUCTION_MIN * MS_PER_MIN, gross); // never negative
-  }
+  const breakMs = Math.min(breaksTotal(p.breaks, start, end), gross);
   return { grossMs: gross, breakMs, netMs: gross - breakMs, open: false };
 }
 

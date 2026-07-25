@@ -17,21 +17,26 @@
     if (clock) clock.textContent = `${two(d.getHours())}:${two(d.getMinutes())}:${two(d.getSeconds())}`;
   }
 
-  const ticker = document.getElementById('ticker');
-  const start = ticker ? parseInt(ticker.dataset.start, 10) : null;
-  function tickShift() {
-    if (!ticker || !start) return;
-    let ms = Date.now() - start;
-    if (ms < 0) ms = 0;
-    const totalMin = Math.floor(ms / 60000);
-    const h = Math.floor(totalMin / 60);
-    const m = totalMin % 60;
-    ticker.textContent = `${h}h${two(m)}`;
+  // Running counters: the shift timer and, when on break, the break timer.
+  function makeTicker(id) {
+    const el = document.getElementById(id);
+    const start = el ? parseInt(el.dataset.start, 10) : null;
+    return function () {
+      if (!el || !start) return;
+      let ms = Date.now() - start;
+      if (ms < 0) ms = 0;
+      const totalMin = Math.floor(ms / 60000);
+      el.textContent = `${Math.floor(totalMin / 60)}h${two(totalMin % 60)}`;
+    };
   }
+  const tickShift = makeTicker('ticker');
+  const tickBreak = makeTicker('breakTicker');
 
-  tickClock(); tickShift();
+  tickClock(); tickShift(); tickBreak();
   setInterval(tickClock, 1000);
+  // Break time is short, so refresh it every second; the shift every 30s.
   setInterval(tickShift, 1000 * 30);
+  setInterval(tickBreak, 1000);
 
   // Auto-dismiss floating flash after a few seconds.
   const flash = document.querySelector('.flash-float');

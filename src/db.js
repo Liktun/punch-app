@@ -31,9 +31,21 @@ db.exec(`
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
   );
 
+  -- Breaks are punched explicitly by the employee and belong to one shift.
+  CREATE TABLE IF NOT EXISTS breaks (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    punch_id     INTEGER NOT NULL,
+    break_in     TEXT NOT NULL,           -- ISO 8601 UTC
+    break_out    TEXT,                    -- ISO 8601 UTC, NULL = break in progress
+    created_at   TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (punch_id) REFERENCES punches(id) ON DELETE CASCADE
+  );
+
   CREATE INDEX IF NOT EXISTS idx_punches_emp      ON punches(employee_id);
   CREATE INDEX IF NOT EXISTS idx_punches_emp_in   ON punches(employee_id, clock_in);
   CREATE INDEX IF NOT EXISTS idx_punches_open     ON punches(employee_id) WHERE clock_out IS NULL;
+  CREATE INDEX IF NOT EXISTS idx_breaks_punch     ON breaks(punch_id);
+  CREATE INDEX IF NOT EXISTS idx_breaks_open      ON breaks(punch_id) WHERE break_out IS NULL;
 `);
 
 // ---- Lightweight migrations (add columns if missing) ----

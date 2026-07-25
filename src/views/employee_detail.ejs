@@ -28,7 +28,14 @@
           <td><%= fmtTime(r.clock_in) %></td>
           <td><%= r.clock_out ? fmtTime(r.clock_out) : '— en cours' %></td>
           <td><%= r.open ? '—' : fmtHours(r.grossMs) %></td>
-          <td><%= r.breakMs ? '−' + fmtHours(r.breakMs) : '—' %></td>
+          <td>
+            <% if (r.breakMs) { %>
+              −<%= fmtHours(r.breakMs) %>
+              <span class="muted small">(<%= r.breaks.filter((b) => b.break_out).length %>)</span>
+            <% } else if ((r.breaks || []).some((b) => !b.break_out)) { %>
+              <span class="muted">en cours</span>
+            <% } else { %>—<% } %>
+          </td>
           <td><strong><%= r.open ? '—' : fmtHours(r.netMs) %></strong>
               <% if (r.edited_by_admin) { %><span class="badge tiny edited" title="<%= r.note || '' %>">modifié</span><% } %>
           </td>

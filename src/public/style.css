@@ -131,6 +131,17 @@ tfoot .grand td strong { color: var(--ok); }
 .punch-btn:active { transform: scale(.98); }
 .punch-btn.in { background: linear-gradient(135deg, #2ecc71, #27ae60); box-shadow: 0 12px 28px rgba(46,204,113,.35); }
 .punch-btn.out { background: linear-gradient(135deg, #ff5c6c, #e84150); box-shadow: 0 12px 28px rgba(255,92,108,.35); }
+/* Break controls: amber to start a break, blue to resume work. */
+.punch-btn.pause { background: linear-gradient(135deg, #f5a623, #d68910); box-shadow: 0 12px 28px rgba(245,166,35,.32); margin-bottom: 10px; }
+.punch-btn.resume { background: linear-gradient(135deg, #4f8cff, #2f6fe0); box-shadow: 0 12px 28px rgba(79,140,255,.35); }
+.shift-state.on-break { color: var(--warn); }
+.live-dot.break { background: var(--warn); box-shadow: 0 0 0 0 rgba(245,166,35,.6); animation: pulse-break 1.6s infinite; }
+@keyframes pulse-break {
+  0% { box-shadow: 0 0 0 0 rgba(245,166,35,.5); }
+  70% { box-shadow: 0 0 0 10px rgba(245,166,35,0); }
+  100% { box-shadow: 0 0 0 0 rgba(245,166,35,0); }
+}
+.worked-val.break { color: var(--warn); }
 .punch-btn:hover { filter: brightness(1.06); }
 .punch-btn-icon { font-size: .9rem; }
 
