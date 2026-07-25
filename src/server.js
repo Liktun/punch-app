@@ -61,7 +61,7 @@ try {
   // busts the browser cache.
   const pub = path.join(__dirname, 'public');
   const themeDir = path.join(pub, 'themes');
-  const files = [path.join(pub, 'base.css')].concat(
+  const files = [path.join(pub, 'themebar.css')].concat(
     fs.readdirSync(themeDir).filter((f) => f.endsWith('.css')).map((f) => path.join(themeDir, f))
   );
   const newest = files.reduce((max, f) => {

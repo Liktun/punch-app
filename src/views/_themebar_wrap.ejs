@@ -1,5 +1,7 @@
-<%# Renders the admin theme bar on top of any themed page (admin + previews). %>
+<%# Renders the admin theme bar on top of any themed page (admin + previews).
+    The bar ships its own stylesheet so it stays legible on every theme. %>
 <% if (typeof showThemeBar !== 'undefined' && showThemeBar) { %>
+  <link rel="stylesheet" href="/themebar.css?v=<%= assetVer %>">
   <% if (typeof preview !== 'undefined' && preview) { %>
     <div class="preview-banner">Aperçu — cet écran est une démonstration</div>
   <% } %>
