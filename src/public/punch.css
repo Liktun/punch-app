@@ -1,0 +1,45 @@
+/* Break controls shared by every theme.
+   The mockups only ever showed "Punch in/out", so the pause and resume buttons
+   need their own look and spacing. Colours come from the active theme's
+   variables where they exist, with neutral fallbacks. */
+
+/* Stack the punch forms with a consistent gap. */
+.punch-card form { margin: 0; }
+.punch-card form + form { margin-top: 12px; }
+
+.punch-btn.pause,
+.punch-btn.resume {
+  /* Match whatever shape the theme gives its punch buttons. */
+  width: 100%;
+}
+
+/* Start a break — amber/warning tone. */
+.punch-btn.pause {
+  background: var(--warn, #a86a1f);
+  border-color: var(--warn, #a86a1f);
+  color: var(--on-warn, #fff);
+}
+
+/* Back to work — neutral/ink tone so it reads differently from punch out. */
+.punch-btn.resume {
+  background: var(--ink, #1a1714);
+  border-color: var(--ink, #1a1714);
+  color: var(--paper, #fff);
+}
+
+/* On-break status colouring. */
+.shift-state.on-break { color: var(--warn, #a86a1f); }
+.worked-val.break { color: var(--warn, #a86a1f); }
+.live-dot.break {
+  background: var(--warn, #a86a1f);
+  animation: punch-pulse-break 1.6s infinite;
+}
+@keyframes punch-pulse-break {
+  0%   { box-shadow: 0 0 0 0 rgba(168, 106, 31, .5); }
+  70%  { box-shadow: 0 0 0 9px rgba(168, 106, 31, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(168, 106, 31, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot.break { animation: none; }
+}
