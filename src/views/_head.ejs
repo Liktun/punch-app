@@ -9,14 +9,15 @@
 </head>
 <body>
 <header class="topbar"><div class="topbar-in">
-  <a class="brand" href="/">Pointo</a>
+  <a class="brand" href="/">Point<em>o</em></a>
   <nav>
     <% if (typeof user !== 'undefined' && user) { %>
+      <% const nav = typeof navActive !== 'undefined' ? navActive : ''; %>
       <% if (user.is_admin) { %>
-        <a href="/admin">Rapport</a>
-        <a href="/admin/employees">Employés</a>
+        <a href="/admin"<%- nav === 'report' ? ' aria-current="page"' : '' %>>Rapport</a>
+        <a href="/admin/employees"<%- nav === 'employees' ? ' aria-current="page"' : '' %>>Employés</a>
       <% } else { %>
-        <a href="/dashboard">Mon punch</a>
+        <a href="/dashboard"<%- nav === 'dashboard' ? ' aria-current="page"' : '' %>>Mon punch</a>
       <% } %>
       <span class="who"><%= user.full_name %></span>
       <form action="/logout" method="post" class="inline">

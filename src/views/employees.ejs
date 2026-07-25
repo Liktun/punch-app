@@ -1,5 +1,6 @@
-<%- include('_head') %>
+<%- include('_head', { navActive: 'employees' }) %>
 <div class="card">
+  <a class="link back-link" href="/admin">← Retour au rapport</a>
   <h1>Employés</h1>
   <% if (flash) { %><div class="flash ok"><%= flash.msg %></div><% } %>
   <% if (error) { %><div class="flash err"><%= error %></div><% } %>

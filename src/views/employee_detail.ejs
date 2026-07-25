@@ -1,6 +1,6 @@
-<%- include('_head') %>
+<%- include('_head', { navActive: 'report' }) %>
 <div class="card">
-  <a class="link" href="/admin?p=<%= offset %>">← Retour au rapport</a>
+  <a class="link back-link" href="/admin?p=<%= offset %>">← Retour au rapport</a>
   <h1><%= emp.full_name %></h1>
   <% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %>"><%= flash.msg %></div><% } %>
 
