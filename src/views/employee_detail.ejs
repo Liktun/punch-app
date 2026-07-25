@@ -73,7 +73,9 @@
     <label>Arrivée <input type="datetime-local" name="clock_in" required></label>
     <label>Départ <input type="datetime-local" name="clock_out"></label>
     <label>Note <input type="text" name="note" maxlength="200" placeholder="ex: punch manqué le 12"></label>
-    <button class="btn primary" type="submit">Ajouter</button>
+    <div class="form-actions">
+      <button class="btn primary" type="submit">Ajouter</button>
+    </div>
   </form>
 </div>
 <%- include('_foot') %>

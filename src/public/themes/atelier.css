@@ -674,7 +674,6 @@ tfoot .grand td strong { font-family: var(--serif); font-weight: 400; font-size:
   border: 1px solid var(--rim);
   border-radius: 12px;
 }
-.row-btns { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* ─── Foot ─────────────────────────────────────────────────────────── */
 .foot {
@@ -699,4 +698,18 @@ tfoot .grand td strong { font-family: var(--serif); font-weight: 400; font-size:
 @media (prefers-reduced-motion: reduce) {
   .live-dot { animation: none; }
   .btn, .punch-btn, tbody tr { transition: none; }
+}
+
+/* Submit row: keep actions clear of the last field. */
+.form-actions {
+  margin-top: 26px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.row-btns {
+  margin-top: 26px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }

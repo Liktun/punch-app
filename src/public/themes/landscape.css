@@ -164,3 +164,17 @@ tfoot .grand strong { color:var(--leaf); }
 
 .foot { text-align:center; font-family:var(--sans); font-size:11px; color:var(--ink-mute); padding:26px; letter-spacing:.04em; }
 @media (max-width:560px){ .hero-title{font-size:3.8rem} .clock-big{font-size:2.7rem} }
+
+/* Submit row: keep actions clear of the last field. */
+.form-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.row-btns {
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

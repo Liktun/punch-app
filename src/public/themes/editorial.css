@@ -131,3 +131,17 @@ tfoot .grand td { border-top:2px solid var(--line-strong); font-family:var(--mon
 
 .foot { text-align:center; font-family:var(--mono); font-size:10.5px; color:var(--ink-mute); padding:24px; letter-spacing:.04em; }
 @media (max-width:560px){ .landing h1{font-size:3.2rem} .clock-big{font-size:2.5rem} }
+
+/* Submit row: keep actions clear of the last field. */
+.form-actions {
+  margin-top: 22px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.row-btns {
+  margin-top: 22px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

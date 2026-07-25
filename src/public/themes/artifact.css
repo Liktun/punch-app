@@ -206,3 +206,17 @@ tfoot .grand strong { color:var(--red-bright); }
   .hero-title { font-size:3.8rem; }
 }
 @media (max-width:560px){ .clock-big{font-size:2.7rem} }
+
+/* Submit row: keep actions clear of the last field. */
+.form-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.row-btns {
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

@@ -33,7 +33,9 @@
     <label>Nom complet <input name="full_name" required maxlength="80"></label>
     <label>Nom d'utilisateur <input name="username" required maxlength="32" pattern="[a-zA-Z0-9._-]{3,32}"></label>
     <label>Mot de passe (min. 8) <input name="password" type="password" required minlength="8" maxlength="200"></label>
-    <button class="btn primary" type="submit">Créer</button>
+    <div class="form-actions">
+      <button class="btn primary" type="submit">Créer</button>
+    </div>
   </form>
 </div>
 <%- include('_foot') %>
