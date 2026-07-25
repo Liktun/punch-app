@@ -20,3 +20,31 @@
     radial-gradient(700px 520px at 6% 92%, rgba(200,16,46,.10), transparent 60%);
   --bg-size:auto;
 }
+
+/* ---- Signature: monochrome red artifact ---- */
+/* A large recessed medallion behind the hero */
+.hero { position: relative; }
+.hero::before {
+  content: ""; position: absolute; top: 50%; left: 50%; z-index: -1;
+  width: 420px; height: 420px; margin: -210px 0 0 -210px; border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, rgba(200,16,46,.32), rgba(26,15,17,.5) 55%, transparent 72%);
+  pointer-events: none;
+}
+/* Heavy condensed uppercase headings, left red rule on cards */
+h1, h2, .greeting, .brand { text-transform: uppercase; font-weight: 800; letter-spacing: .01em; }
+.landing h1 { font-weight: 900; letter-spacing: -.01em; }
+.landing h1 em { font-style: normal; color: #ff2740; }
+.brand em { font-style: normal; color: #ff2740; }
+.card, .punch-card { border-left: 3px solid #7d1420; }
+.punch-card { border-left-color: #ff2740; }
+/* Glowing red numerals */
+.clock-big, .big-total-val { text-shadow: 0 0 30px rgba(255,39,64,.35); }
+.worked-val { color: #ff2740; }
+/* Loud gradient actions */
+.btn.primary, .punch-btn.out {
+  background: linear-gradient(135deg,#ff2740,#c8102e); border-color: transparent; color: #fff;
+}
+.punch-btn.in { background: linear-gradient(135deg,#ff5568,#c8102e); border-color: transparent; color: #fff; }
+.login-logo { border-color: #3a2a2d; color: #ff2740; }
+tbody tr:hover { background: rgba(200,16,46,.06); }
+th { letter-spacing: .14em; }

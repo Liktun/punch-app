@@ -518,6 +518,41 @@ app.post('/admin/punch/:pid/delete', requireAuth, requireAdmin, verifyCsrf, (req
   res.redirect(`/admin/employee/${punch.employee_id}?p=${offset}`);
 });
 
+// Admin: preview a screen in the active theme without leaving the admin account.
+// Renders the real views with representative demo data, so the admin can check
+// how the chosen theme looks on the employee-facing pages.
+app.get('/preview/:screen', requireAuth, requireAdmin, (req, res) => {
+  const screen = req.params.screen;
+  const now = new Date();
+  const startedAt = new Date(now.getTime() - 6 * 3600_000 - 2 * 60_000);
+
+  if (screen === 'login') {
+    return res.render('login', { error: null, preview: true });
+  }
+  if (screen === 'dashboard') {
+    const mk = (h1, m1, h2, m2) => {
+      const d = new Date(now); d.setDate(d.getDate() - 1);
+      const a = new Date(d); a.setHours(h1, m1, 0, 0);
+      const b = h2 === null ? null : (() => { const x = new Date(d); x.setHours(h2, m2, 0, 0); return x.toISOString(); })();
+      return { clock_in: a.toISOString(), clock_out: b };
+    };
+    return res.render('dashboard', {
+      user: { full_name: 'Marie Tremblay', is_admin: 0 },
+      wrapClass: 'dash',
+      preview: true,
+      open: { id: 0, clock_in: startedAt.toISOString() },
+      openBreak: null,
+      periodLabel: periodLabel(periodFor(now)),
+      periodNet: '41h48', periodRegular: '40h00', periodOvertime: '1h48',
+      periodBreak: '1h30', hasOvertime: true, periodShifts: 6,
+      recent: [mk(8, 30, null, null), mk(8, 28, 17, 3), mk(8, 31, 16, 59)],
+      fmtTime, fmtTimeOnly, fmtDayShort, fmtHours,
+      flash: null,
+    });
+  }
+  return res.status(404).render('error', { message: 'Aperçu introuvable.' });
+});
+
 // Admin: change the app-wide visual theme.
 app.post('/admin/theme', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
   const id = String(req.body.theme || '');

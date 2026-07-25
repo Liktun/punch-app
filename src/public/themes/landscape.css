@@ -21,3 +21,38 @@
     radial-gradient(1100px 520px at 50% 0%, #123038, #0d1c22 60%);
   --bg-size:auto;
 }
+
+/* ---- Signature: layered ridgelines under glass ---- */
+/* The landscape: blurred mountain bands pinned to the bottom of the viewport */
+body::before {
+  content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: 58vh;
+  z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(120% 90px at 20% 100%, #2b6355 0 60%, transparent 61%),
+    radial-gradient(120% 130px at 70% 100%, #1d4a4a 0 60%, transparent 61%),
+    radial-gradient(150% 190px at 45% 100%, #16323a 0 60%, transparent 61%),
+    linear-gradient(180deg, transparent 0%, #0a1518 82%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 40%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 40%);
+}
+/* A low sun on the horizon behind the hero */
+.landing::before, .hero::before {
+  content: ""; display: block; width: 92px; height: 92px; margin: 0 auto 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #ffe6b0, #e8a24a 55%, transparent 72%);
+  box-shadow: 0 0 70px 12px rgba(232,162,74,.35);
+}
+.hero::before { width: 64px; height: 64px; }
+
+/* Translucent glass panels over the scenery */
+.card, .punch-card, .theme-bar { backdrop-filter: blur(16px); }
+
+/* Big editorial serif, amber accents */
+h1, h2, .greeting, .landing h1 { letter-spacing: -.02em; }
+.landing h1 em { font-style: italic; color: #e8a24a; }
+.brand em { font-style: italic; color: #e8a24a; }
+.clock-big, .big-total-val { font-family: "Fraunces", Georgia, serif; }
+.worked-val { color: #6fcaa6; font-family: "Fraunces", Georgia, serif; }
+.login-logo { border-color: rgba(233,220,196,.3); color: #e8a24a; }
+.punch-btn.in { background: linear-gradient(140deg,#6fcaa6,#2f7d6b); border-color: transparent; }
+.punch-btn.out { background: linear-gradient(140deg,#d9744e,#b4512f); border-color: transparent; color: #fff; }

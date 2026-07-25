@@ -21,3 +21,34 @@
     linear-gradient(90deg, rgba(57,217,138,.045) 1px, transparent 1px);
   --bg-size:36px 36px, 36px 36px;
 }
+
+/* ---- Signature: instrument panel ---- */
+/* Scanline sheen over everything */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: repeating-linear-gradient(180deg, rgba(57,217,138,.035) 0 1px, transparent 1px 3px);
+}
+/* Bracketed section labels, the way an ops console reads */
+.section-title::before, .theme-bar-title::before { content: "[ "; }
+.section-title::after,  .theme-bar-title::after  { content: " ]"; }
+/* Squared, hard-edged panels with a green rim */
+.card, .punch-card, .theme-bar { border-color: #28353f; }
+.punch-card { box-shadow: 0 0 0 1px rgba(57,217,138,.10), 0 18px 40px -26px #000; }
+/* Phosphor glow on live data */
+.clock-big, .big-total-val { text-shadow: 0 0 18px rgba(57,217,138,.45); }
+.worked-val { color: #39d98a; text-shadow: 0 0 14px rgba(57,217,138,.35); }
+/* Prompt caret on the brand */
+.brand::before { content: "> "; color: #39d98a; }
+.brand em { font-style: normal; color: #39d98a; }
+.landing h1 em { font-style: normal; color: #39d98a; }
+/* Blinking cursor after the landing title */
+.landing h1::after {
+  content: "_"; color: #39d98a; animation: term-blink 1.1s steps(1) infinite;
+}
+@keyframes term-blink { 50% { opacity: 0; } }
+/* Dense uppercase tabular tables */
+th { color: #5d6f6c; }
+tbody tr:hover { background: rgba(57,217,138,.05); }
+.btn.primary, .punch-btn.in { color: #04140c; font-weight: 700; }
+.login-logo { border-color: #28353f; color: #39d98a; }
+@media (prefers-reduced-motion: reduce) { .landing h1::after { animation: none; } }

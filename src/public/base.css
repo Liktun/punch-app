@@ -321,6 +321,25 @@ tfoot .grand td strong { color: var(--total-color, var(--ink)); }
 .theme-opt[aria-current="true"] {
   background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600;
 }
+.theme-bar-screens {
+  margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.screen-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.screen-opt {
+  font-family: var(--mono); font-size: 11.5px; text-decoration: none;
+  padding: 7px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  color: var(--ink-soft); transition: background .15s, color .15s, border-color .15s;
+}
+.screen-opt:hover { border-color: var(--ink); color: var(--ink); }
+.screen-opt[aria-current="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.preview-banner {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .06em;
+  text-align: center; padding: 9px 14px;
+  background: var(--accent); color: var(--accent-ink);
+}
+.preview-banner b { font-weight: 600; }
 
 /* ---- Footer ---- */
 .foot {

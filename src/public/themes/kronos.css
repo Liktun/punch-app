@@ -23,3 +23,41 @@
     radial-gradient(1px 1px at 85% 25%, rgba(239,233,223,.4), transparent);
   --bg-size:auto;
 }
+
+/* ---- Signature: gilded obsidian ---- */
+/* Gold hairline + inner glow on panels */
+.card, .punch-card, .theme-bar {
+  background: linear-gradient(180deg, #15112a, #0f0b1d);
+  border-color: #3a2f5c;
+}
+.punch-card { border-color: #8a733a; box-shadow: 0 30px 70px -30px rgba(201,162,75,.28), inset 0 1px 0 rgba(240,208,137,.14); }
+
+/* Engraved serif headings with wide tracking */
+h1, h2, .brand, .greeting {
+  letter-spacing: .05em; text-transform: uppercase;
+}
+.landing h1 { text-transform: none; letter-spacing: .06em; }
+.landing h1 em { font-style: normal; color: #f0d089; }
+.brand em { color: #f0d089; font-style: normal; }
+
+/* Gilded numerals */
+.clock-big, .big-total-val { text-shadow: 0 0 24px rgba(240,208,137,.28); }
+.worked-val { color: #f0d089; }
+
+/* Gold gradient primary actions */
+.btn.primary, .punch-btn.in {
+  background: linear-gradient(135deg,#f0d089,#c9a24b);
+  border-color: #c9a24b; color: #080611; font-weight: 600;
+}
+.punch-btn.out { background: linear-gradient(135deg,#e0708a,#b34f6a); border-color: transparent; color: #fff; }
+.login-logo { border-color: #8a733a; color: #f0d089; background: rgba(8,6,17,.6); }
+
+/* Orbital ring behind the login mark */
+.login-logo { position: relative; }
+.login-logo::after {
+  content: ""; position: absolute; inset: -10px; border-radius: 50%;
+  border: 1px dashed rgba(201,162,75,.5);
+  animation: kronos-spin 26s linear infinite;
+}
+@keyframes kronos-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .login-logo::after { animation: none; } }

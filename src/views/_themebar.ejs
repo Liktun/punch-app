@@ -1,4 +1,4 @@
-<%# Admin-only theme selector. Applies app-wide for every user. %>
+<%# Admin-only theme selector + screen previews. Applies app-wide for everyone. %>
 <div class="theme-bar">
   <div class="theme-bar-head">
     <span class="theme-bar-title">Thème de l'application</span>
@@ -6,6 +6,7 @@
       Actif : <b><%= (themes.find((t) => t.id === theme) || {}).label %></b>
     </span>
   </div>
+
   <div class="theme-list">
     <% themes.forEach((t) => { %>
       <form action="/admin/theme" method="post">
@@ -16,5 +17,15 @@
           <%= t.id === theme ? 'aria-current="true"' : '' %>><%= t.label %></button>
       </form>
     <% }) %>
+  </div>
+
+  <div class="theme-bar-screens">
+    <span class="theme-bar-title">Aperçu des écrans</span>
+    <div class="screen-list">
+      <a class="screen-opt" href="/?preview=1" target="_blank" rel="noopener">Accueil</a>
+      <a class="screen-opt" href="/preview/login" target="_blank" rel="noopener">Connexion</a>
+      <a class="screen-opt" href="/preview/dashboard" target="_blank" rel="noopener">Employé</a>
+      <a class="screen-opt" href="/admin" aria-current="true">Admin</a>
+    </div>
   </div>
 </div>
