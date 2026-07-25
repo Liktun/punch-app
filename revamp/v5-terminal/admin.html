@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../switcher.css">
+  <link rel="stylesheet" href="theme.css">
+  <title>Rapport des heures — Pointo</title>
+</head>
+<body data-version="v5-terminal" data-screen="admin">
+  <header class="topbar">
+    <a class="brand" href="landing.html">Pointo</a>
+    <nav>
+      <a class="active" href="admin.html">Rapport</a>
+      <a href="#">Employés</a>
+    </nav>
+    <span class="spacer"></span>
+    <span class="who">Administrateur</span>
+    <a class="logout" href="login.html">Déconnexion</a>
+  </header>
+
+  <main class="wrap">
+    <h1 class="page-title">Rapport des heures</h1>
+
+    <div class="periodnav">
+      <a class="btn btn-ghost" href="#">← Précédente</a>
+      <span class="label">5 janv. – 18 janv. 2026 <em>(courante)</em></span>
+      <span class="btn btn-ghost" aria-disabled="true">Suivante →</span>
+    </div>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Heures par employé</h2>
+        <span class="tag">4 employés</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Employé</th>
+              <th>Quarts</th>
+              <th class="num">Régulières</th>
+              <th class="num">Supp.</th>
+              <th class="num">Net</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Marie Tremblay <span class="sub-id">(marie.tremblay)</span></td>
+              <td>6 <span class="badge">1 en cours</span></td>
+              <td class="num">40h00</td>
+              <td class="num">1h48</td>
+              <td class="num green">41h48</td>
+              <td class="num"><a class="detail-link" href="#">Détail</a></td>
+            </tr>
+            <tr>
+              <td>Luc Gagnon <span class="sub-id">(luc.gagnon)</span></td>
+              <td>5</td>
+              <td class="num">37h30</td>
+              <td class="num dim">—</td>
+              <td class="num green">37h30</td>
+              <td class="num"><a class="detail-link" href="#">Détail</a></td>
+            </tr>
+            <tr>
+              <td>Sophie Roy <span class="sub-id">(sophie.roy)</span></td>
+              <td>6</td>
+              <td class="num">40h00</td>
+              <td class="num">3h15</td>
+              <td class="num green">43h15</td>
+              <td class="num"><a class="detail-link" href="#">Détail</a></td>
+            </tr>
+            <tr>
+              <td>Ahmed Benali <span class="sub-id">(ahmed.benali)</span></td>
+              <td>4</td>
+              <td class="num">31h00</td>
+              <td class="num dim">—</td>
+              <td class="num green">31h00</td>
+              <td class="num"><a class="detail-link" href="#">Détail</a></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td class="lbl">Total de la période</td>
+              <td></td>
+              <td class="num">148h30</td>
+              <td class="num">5h03</td>
+              <td class="num green">153h33</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <p class="note">Heures supp. = au-delà de 40h/semaine (taux 1.5×). Pauses déduites automatiquement sur les longs quarts.</p>
+  </main>
+
+  <script src="../switcher.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+/* Neutral chrome for the version/screen switcher — kept theme-agnostic so it
+   sits above any of the 5 looks without clashing. */
+.rework-switcher {
+  position: sticky; top: 0; z-index: 9999;
+  background: #0b0d16; color: #e7e9f3;
+  border-bottom: 1px solid #262a3f;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+}
+.rsw-inner {
+  max-width: 1180px; margin: 0 auto; padding: 9px 16px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.rsw-brand { font-size: 12px; letter-spacing: .04em; color: #aab0cc; white-space: nowrap; }
+.rsw-brand b { color: #fff; }
+.rsw-group { display: flex; gap: 4px; flex-wrap: wrap; }
+.rsw-sep { width: 1px; align-self: stretch; background: #2a2f47; margin: 2px 4px; }
+.rsw-btn, .rsw-tab, .rsw-home {
+  text-decoration: none; color: #c7cce6; font-size: 12px; line-height: 1;
+  padding: 7px 11px; border-radius: 7px; border: 1px solid #2a2f47;
+  background: #141826; transition: background .15s ease, color .15s ease, border-color .15s ease;
+  white-space: nowrap;
+}
+.rsw-btn:hover, .rsw-tab:hover, .rsw-home:hover { background: #1d2236; color: #fff; border-color: #3a4062; }
+.rsw-btn.is-active { background: #4f8cff; border-color: #4f8cff; color: #fff; }
+.rsw-tab.is-active { background: #e7e9f3; border-color: #e7e9f3; color: #0b0d16; }
+.rsw-home { margin-left: auto; font-size: 14px; padding: 6px 10px; }
+@media (max-width: 640px) {
+  .rsw-brand { width: 100%; }
+  .rsw-home { margin-left: 0; }
+}

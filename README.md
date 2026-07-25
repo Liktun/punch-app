@@ -14,7 +14,7 @@ Punch d'arrivée/départ des employés, calcul des heures travaillées par **pé
   - Rapport par employé (régulières, supp., net) avec grand total, navigation entre périodes.
   - **Corrections d'oublis** : ajouter / éditer / supprimer un quart, avec validation (départ > arrivée, anti-chevauchement) et flag « modifié ».
   - Gestion des employés (créer, activer/désactiver).
-- **Pauses** : déduction automatique (ex. quart > 6 h → −30 min), configurable via `.env`.
+- **Pauses punchées** : l'employé punche le début et la fin de chaque pause. Le temps de pause réel est déduit du quart (aucune déduction automatique). Le départ est bloqué tant qu'une pause est en cours.
 - **Heures supplémentaires** : au-delà de 40 h/semaine (Lun–Dim), calculées par semaine à l'intérieur de la période, affichées séparément (taux configurable).
 - **Périodes de paie** : bi-hebdomadaires, alignées sur une date d'ancrage configurable (`.env`).
 
@@ -24,7 +24,8 @@ Ajouts au-delà du cœur du mandat (punch + calcul + vue admin) :
 
 - **Page d'accueil (landing)** publique et moderne avec nom de l'app et accès rapide à la connexion.
 - **Corrections d'oublis (admin)** : CRUD complet sur les quarts (ajout / édition / suppression) pour gérer les punchs manqués, avec validation et traçabilité (flag « modifié » + note).
-- **Déduction automatique de pauses** par seuil de durée (configurable, désactivable).
+- **Pauses punchées** : bouton « Punch pause » / « Reprendre le travail », compteur de pause en direct, plusieurs pauses par quart, total réel déduit du net.
+- **Galerie de thèmes** (`/themes`) : 7 directions visuelles du frontend, navigables via une barre de sélection.
 - **Heures supplémentaires hebdomadaires** (>40 h/semaine) calculées et affichées séparément des heures régulières, taux configurable.
 - **UX temps réel** côté employé : horloge en direct + compteur de durée du quart en cours.
 - **Sécurité renforcée** : protection CSRF sur tous les formulaires, rate limiting sur la connexion, CSP stricte, en-têtes HSTS/X-Frame.
@@ -92,6 +93,7 @@ src/db.js           schéma SQLite + index
 src/payperiod.js    calcul des périodes bi-hebdo
 src/views/          EJS
 src/public/         CSS
+revamp/             maquettes des thèmes frontend (servies sur /themes)
 scripts/seed.js     données de démo
 deploy/             systemd unit + deploy.sh
 .github/workflows/  déploiement SSH
@@ -117,8 +119,7 @@ npm start
 ## Configuration (extraits `.env`)
 
 ```
-BREAK_THRESHOLD_MIN=360     # au-delà de 6h -> pause déduite
-BREAK_DEDUCTION_MIN=30      # minutes déduites (0 = désactivé)
+# Les pauses sont punchées par l'employé : rien à configurer.
 OVERTIME_WEEKLY_HOURS=40    # seuil hebdo overtime
 OVERTIME_RATE=1.5           # info d'affichage
 PAY_PERIOD_ANCHOR=2026-01-05
@@ -128,7 +129,7 @@ TZ=America/Toronto
 
 ## Tests
 
-`node scripts/test-hours.js` — vérifie déduction de pause, overtime hebdomadaire, split correct par semaine.
+`node scripts/test-hours.js` — vérifie les pauses punchées (simples, multiples, en cours, bornées au quart), l'overtime hebdomadaire et le split correct par semaine.
 
 ## Ce que je ferais avec plus de temps
 

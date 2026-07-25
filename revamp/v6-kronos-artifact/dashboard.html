@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pointo â€” EmployÃ© (Kronos Artifact)</title>
+<link rel="stylesheet" href="../switcher.css">
+<link rel="stylesheet" href="theme.css">
+</head>
+<body data-version="v6-kronos-artifact" data-screen="dashboard">
+<header class="topbar"><div class="topbar-in">
+  <a class="brand" href="landing.html"><span class="mark"></span>POINT<span class="k">O</span></a>
+  <nav>
+    <a href="dashboard.html">Mon punch</a>
+    <span class="who">Marie Tremblay</span>
+    <a href="login.html">DÃ©connexion</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <div class="flash">
+    <svg class="svg-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+    ArrivÃ©e enregistrÃ©e.
+  </div>
+
+  <section class="hero">
+    <p class="greeting">Bonjour, Marie ðŸ‘‹</p>
+    <div class="card artifact punch-card">
+      <div class="bg-circle"></div>
+      <div class="clock-big" id="clock">14:32:07</div>
+      <div class="shift-state"><span class="live-dot"></span><span>Quart en cours</span></div>
+      <div class="worked-now">
+        <span class="worked-val" id="ticker">6h02</span>
+        <span class="worked-label">depuis 08:30</span>
+      </div>
+      <button class="punch-btn out" type="button">
+        <svg class="svg-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        Punch out
+      </button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="summary-head">
+      <p class="eyebrow" style="margin:0;">Cette pÃ©riode de paie</p>
+      <span class="summary-sub">5 janv. â€“ 18 janv. 2026</span>
+    </div>
+    <div class="big-total">
+      <span class="big-total-val">41h48</span>
+      <span class="big-total-label">net travaillÃ©es</span>
+    </div>
+    <div class="chips">
+      <span class="chip"><span class="chip-dot reg"></span>40h00 rÃ©guliÃ¨res</span>
+      <span class="chip"><span class="chip-dot ot"></span>1h48 supp.</span>
+      <span class="chip"><span class="chip-dot brk"></span>1h30 pauses</span>
+      <span class="chip">6 quarts</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <p class="section-title">Mes derniers punchs</p>
+    <ul class="punch-list">
+      <li class="punch-item">
+        <div><span class="punch-day">jeu. 15 janv.</span><span class="punch-times">08:30 <span class="punch-arrow">â†’</span> en cours</span></div>
+        <span class="dur-pill live"><span class="live-dot small"></span> en cours</span>
+      </li>
+      <li class="punch-item">
+        <div><span class="punch-day">mer. 14 janv.</span><span class="punch-times">08:28 <span class="punch-arrow">â†’</span> 17:03</span></div>
+        <span class="dur-pill">8h05</span>
+      </li>
+      <li class="punch-item">
+        <div><span class="punch-day">mar. 13 janv.</span><span class="punch-times">08:31 <span class="punch-arrow">â†’</span> 16:59</span></div>
+        <span class="dur-pill">7h58</span>
+      </li>
+      <li class="punch-item">
+        <div><span class="punch-day">lun. 12 janv.</span><span class="punch-times">08:45 <span class="punch-arrow">â†’</span> 17:15</span></div>
+        <span class="dur-pill">8h00</span>
+      </li>
+    </ul>
+  </section>
+</main>
+<footer class="foot">Pointo beta Â· heures calculÃ©es par pÃ©riode de paie bi-hebdomadaire</footer>
+<script src="../switcher.js"></script>
+<script src="../clock.js"></script>
+</body>
+</html>

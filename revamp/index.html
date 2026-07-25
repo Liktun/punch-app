@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pointo — Reworks du frontend</title>
+<style>
+  :root { --bg:#0b0d16; --panel:#141826; --line:#262a3f; --ink:#e7e9f3; --mut:#aab0cc; --accent:#4f8cff; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    background: radial-gradient(1000px 500px at 50% -10%, #17203f, var(--bg) 60%); color: var(--ink); min-height:100vh; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 56px 20px 80px; }
+  h1 { font-size: 2.2rem; margin: 0 0 6px; letter-spacing: -.02em; }
+  .lede { color: var(--mut); margin: 0 0 8px; line-height:1.6; max-width: 62ch; }
+  .hint { color: var(--mut); font-size: .82rem; margin: 0 0 34px; }
+  .hint kbd { background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:1px 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 18px; }
+  .v { background: var(--panel); border:1px solid var(--line); border-radius: 14px; padding: 20px; display:flex; flex-direction:column; gap:12px; }
+  .v-top { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .v-name { font-size:1.15rem; color:#fff; }
+  .v-no { color:var(--mut); font-size:.8rem; }
+  .v-desc { color:var(--mut); font-size:.85rem; line-height:1.5; margin:0; min-height: 3.9em; }
+  .sw { width:100%; height:8px; border-radius:999px; }
+  .screens { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
+  .screens a { text-decoration:none; color:var(--ink); font-size:.78rem; padding:6px 10px;
+    border:1px solid var(--line); border-radius:7px; background:#0e1220; }
+  .screens a:hover { border-color:var(--accent); color:#fff; }
+  .screens a.main { background:var(--accent); border-color:var(--accent); color:#fff; }
+  footer { color:var(--mut); font-size:.78rem; margin-top:40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Pointo — 5 reworks du frontend</h1>
+  <p class="lede">Cinq directions visuelles pour l'app de punch. Chaque version reprend des idées de « The Library » et couvre les écrans réels : accueil, connexion, tableau de bord employé et rapport admin.</p>
+  <p class="hint">Astuce : dans n'importe quelle page, tape <kbd>1</kbd>–<kbd>7</kbd> pour changer de version, <kbd>←</kbd>/<kbd>→</kbd> pour changer d'écran.</p>
+
+  <div class="grid">
+    <div class="v">
+      <div class="v-top"><span class="v-name">Éditorial</span><span class="v-no">v1</span></div>
+      <div class="sw" style="background:linear-gradient(90deg,#f2ede3,#d1462f)"></div>
+      <p class="v-desc">Print-tech chaleureux : papier crème, texture demi-teinte, serif Newsreader + mono, accent rouge signal.</p>
+      <div class="screens">
+        <a class="main" href="v1-editorial/dashboard.html">Employé</a>
+        <a href="v1-editorial/landing.html">Accueil</a>
+        <a href="v1-editorial/login.html">Connexion</a>
+        <a href="v1-editorial/admin.html">Admin</a>
+      </div>
+    </div>
+
+    <div class="v">
+      <div class="v-top"><span class="v-name">Kronos</span><span class="v-no">v2</span></div>
+      <div class="sw" style="background:linear-gradient(90deg,#0a0710,#c9a24b,#0a0710)"></div>
+      <p class="v-desc">Obsidienne + or, horloge orbitale animée, sablier, starfield. Sombre et premium.</p>
+      <div class="screens">
+        <a class="main" href="v2-kronos/dashboard.html">Employé</a>
+        <a href="v2-kronos/landing.html">Accueil</a>
+        <a href="v2-kronos/login.html">Connexion</a>
+        <a href="v2-kronos/admin.html">Admin</a>
+      </div>
+    </div>
+
+    <div class="v">
+      <div class="v-top"><span class="v-name">Tech Landscape</span><span class="v-no">v3</span></div>
+      <div class="sw" style="background:linear-gradient(90deg,#0d1c22,#2f7d6b,#e8a24a)"></div>
+      <p class="v-desc">Moderne × organique : décor de paysage naturel, tableau de bord data, palette terreuse contrastée, grande typo serif, superpositions translucides, graphiques.</p>
+      <div class="screens">
+        <a class="main" href="v3-landscape/dashboard.html">Employé</a>
+        <a href="v3-landscape/landing.html">Accueil</a>
+        <a href="v3-landscape/login.html">Connexion</a>
+        <a href="v3-landscape/admin.html">Admin</a>
+      </div>
+    </div>
+
+    <div class="v">
+      <div class="v-top"><span class="v-name">Aurora</span><span class="v-no">v4</span></div>
+      <div class="sw" style="background:linear-gradient(90deg,#f7f8fc,#7c5cf5,#4f46e5)"></div>
+      <p class="v-desc">UI produit premium : surfaces superposées, ombres étagées, accent indigo→violet, anneau de progression, graphique hebdo et chiffres tabulaires.</p>
+      <div class="screens">
+        <a class="main" href="v4-softlight/dashboard.html">Employé</a>
+        <a href="v4-softlight/landing.html">Accueil</a>
+        <a href="v4-softlight/login.html">Connexion</a>
+        <a href="v4-softlight/admin.html">Admin</a>
+      </div>
+    </div>
+
+    <div class="v">
+      <div class="v-top"><span class="v-name">Terminal</span><span class="v-no">v5</span></div>
+      <div class="sw" style="background:linear-gradient(90deg,#05070a,#39d98a)"></div>
+      <p class="v-desc">Terminal néon sombre : grille technique, données tabulaires, vert phosphore. Précision d'outil.</p>
+      <div class="screens">
+        <a class="main" href="v5-terminal/dashboard.html">Employé</a>
+        <a href="v5-terminal/landing.html">Accueil</a>
+        <a href="v5-terminal/login.html">Connexion</a>
+        <a href="v5-terminal/admin.html">Admin</a>
+      </div>
+    </div>
+
+    <div class="v">
+      <div class="v-top"><span class="v-name">Kronos · Artifact</span><span class="v-no">v6</span></div>
+      <div class="sw" style="background:linear-gradient(90deg,#0d0b0c,#c8102e,#0d0b0c)"></div>
+      <p class="v-desc">Variation Kronos, style « Digital Artifacts » : moderne × classique, statue rouge dans un grand cercle, palette rouge monochrome, typo sans-serif audacieuse, fort contraste.</p>
+      <div class="screens">
+        <a class="main" href="v6-kronos-artifact/landing.html">Accueil</a>
+        <a href="v6-kronos-artifact/dashboard.html">Employé</a>
+        <a href="v6-kronos-artifact/login.html">Connexion</a>
+        <a href="v6-kronos-artifact/admin.html">Admin</a>
+      </div>
+    </div>
+
+    <div class="v">
+      <div class="v-top"><span class="v-name">Cosmos</span><span class="v-no">v7</span></div>
+      <div class="sw" style="background:linear-gradient(90deg,#000,#fff)"></div>
+      <p class="v-desc">Thème spatial interactif : un univers vivant en fond (parallaxe à la souris, étoiles filantes), noir &amp; blanc pur, minimal et raffiné.</p>
+      <div class="screens">
+        <a class="main" href="v7-cosmos/landing.html">Accueil</a>
+        <a href="v7-cosmos/dashboard.html">Employé</a>
+        <a href="v7-cosmos/login.html">Connexion</a>
+        <a href="v7-cosmos/admin.html">Admin</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>Maquettes statiques · données de démonstration · <a style="color:var(--accent)" href="../README.md">à propos de Pointo</a></footer>
+</div>
+</body>
+</html>

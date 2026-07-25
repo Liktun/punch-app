@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pointo — Admin (Éditorial)</title>
+<link rel="stylesheet" href="../switcher.css">
+<link rel="stylesheet" href="theme.css">
+</head>
+<body data-version="v1-editorial" data-screen="admin">
+<header class="topbar"><div class="topbar-in">
+  <a class="brand" href="landing.html">⏱ Point<em>o</em></a>
+  <nav>
+    <a href="admin.html">Rapport</a>
+    <a href="#">Employés</a>
+    <span class="who">Administrateur</span>
+    <a href="login.html">Déconnexion</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <div class="card">
+    <p class="eyebrow">Rapport des heures</p>
+    <h1>Période de paie</h1>
+
+    <div class="period-nav">
+      <a class="btn ghost" href="#">← Précédente</a>
+      <span class="period-label">5 janv. – 18 janv. 2026 <em>(courante)</em></span>
+      <span class="btn ghost" aria-disabled="true" style="opacity:.4;pointer-events:none;">Suivante →</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Employé</th><th class="num">Quarts</th><th class="num">Régulières</th><th class="num">Supp.</th><th class="num">Net</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Marie Tremblay <span class="muted">(marie.tremblay)</span></td>
+          <td class="num">6 <span class="badge">1 en cours</span></td>
+          <td class="num">40h00</td><td class="num ot-val">1h48</td><td class="num"><strong>41h48</strong></td>
+          <td><a class="link" href="#">Détail</a></td>
+        </tr>
+        <tr>
+          <td>Luc Gagnon <span class="muted">(luc.gagnon)</span></td>
+          <td class="num">5</td><td class="num">37h30</td><td class="num muted">—</td><td class="num"><strong>37h30</strong></td>
+          <td><a class="link" href="#">Détail</a></td>
+        </tr>
+        <tr>
+          <td>Sophie Roy <span class="muted">(sophie.roy)</span></td>
+          <td class="num">6</td><td class="num">40h00</td><td class="num ot-val">3h15</td><td class="num"><strong>43h15</strong></td>
+          <td><a class="link" href="#">Détail</a></td>
+        </tr>
+        <tr>
+          <td>Ahmed Benali <span class="muted">(ahmed.benali)</span></td>
+          <td class="num">4</td><td class="num">31h00</td><td class="num muted">—</td><td class="num"><strong>31h00</strong></td>
+          <td><a class="link" href="#">Détail</a></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="grand">
+          <td><strong>Total de la période</strong></td><td></td>
+          <td class="num"><strong>148h30</strong></td>
+          <td class="num"><strong class="ot-val">5h03</strong></td>
+          <td class="num"><strong>153h33</strong></td><td></td>
+        </tr>
+      </tfoot>
+    </table>
+    <p class="muted small" style="font-family:var(--mono);margin-top:14px;">Heures supp. = au-delà de 40h/semaine (taux 1.5×). Pauses déduites automatiquement sur les longs quarts.</p>
+  </div>
+</main>
+<footer class="foot">Pointo beta · heures calculées par période de paie bi-hebdomadaire</footer>
+<script src="../switcher.js"></script>
+</body>
+</html>

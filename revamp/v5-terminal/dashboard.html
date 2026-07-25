@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../switcher.css">
+  <link rel="stylesheet" href="theme.css">
+  <title>Mon punch â€” Pointo</title>
+</head>
+<body data-version="v5-terminal" data-screen="dashboard">
+  <header class="topbar">
+    <a class="brand" href="landing.html">Pointo</a>
+    <nav>
+      <a class="active" href="dashboard.html">Mon punch</a>
+    </nav>
+    <span class="spacer"></span>
+    <span class="who">Marie Tremblay</span>
+    <a class="logout" href="login.html">DÃ©connexion</a>
+  </header>
+
+  <main class="wrap">
+    <div class="flash">ArrivÃ©e enregistrÃ©e.</div>
+
+    <div class="pagehead">
+      <h1 class="greet">Bonjour, Marie ðŸ‘‹</h1>
+    </div>
+
+    <div class="grid">
+      <!-- Punch card -->
+      <section class="card punch-card">
+        <div class="card-head">
+          <h2>Punch</h2>
+          <span class="tag">tty0 / marie</span>
+        </div>
+        <div class="card-body">
+          <div class="clock" id="clock">14:32:07</div>
+          <div class="shift-status"><span class="pulse"></span> Quart en cours</div>
+          <div class="worked">
+            <span class="val" id="ticker">6h02</span>
+            <span class="lbl">depuis 08:30</span>
+          </div>
+          <button class="btn btn-danger btn-lg" type="button">Punch out</button>
+        </div>
+      </section>
+
+      <!-- Period summary -->
+      <section class="card">
+        <div class="card-head">
+          <h2>Cette pÃ©riode de paie</h2>
+          <span class="tag">5 janv. â€“ 18 janv. 2026</span>
+        </div>
+        <div class="card-body">
+          <div class="total-big">41h48</div>
+          <div class="total-lbl">net travaillÃ©es</div>
+          <div class="chips">
+            <span class="chip">40h00 rÃ©guliÃ¨res</span>
+            <span class="chip accent">1h48 supp.</span>
+            <span class="chip">1h30 pauses</span>
+            <span class="chip">6 quarts</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section class="card span-2">
+        <div class="card-head">
+          <h2>Mes derniers punchs</h2>
+          <span class="tag">log --last 4</span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>EntrÃ©e â†’ Sortie</th>
+                <th class="num">DurÃ©e</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>jeu. 15 janv.</td>
+                <td>08:30 â†’ en cours</td>
+                <td class="num"><span class="pill live"><span class="pulse"></span> en cours</span></td>
+              </tr>
+              <tr>
+                <td>mer. 14 janv.</td>
+                <td>08:28 â†’ 17:03</td>
+                <td class="num green">8h05</td>
+              </tr>
+              <tr>
+                <td>mar. 13 janv.</td>
+                <td>08:31 â†’ 16:59</td>
+                <td class="num green">7h58</td>
+              </tr>
+              <tr>
+                <td>lun. 12 janv.</td>
+                <td>08:45 â†’ 17:15</td>
+                <td class="num green">8h00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../switcher.js"></script>
+  <script src="../clock.js"></script>
+</body>
+</html>
