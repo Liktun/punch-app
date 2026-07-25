@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rapport des heures — Pointo</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<header class="topbar">
+    <a class="brand" href="/">Pointo</a>
+    <nav>
+      <a class="active" href="/admin">Rapport</a>
+      <a href="#">Employés</a>
+    </nav>
+    <span class="spacer"></span>
+    <span class="who"><%= user.full_name %></span>
+    <a class="logout" href="/login">Déconnexion</a>
+  </header>
+
+  <main class="wrap">
+    <h1 class="page-title">Rapport des heures</h1>
+
+    <div class="periodnav">
+      <a class="btn btn-ghost" href="#">← Précédente</a>
+      <span class="label"><%= periodLabel %><% if (offset === 0) { %> <em>(courante)</em><% } %></span>
+      <span class="btn btn-ghost" aria-disabled="true">Suivante →</span>
+    </div>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Heures par employé</h2>
+        <span class="tag">4 employés</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>Employé</th>
+              <th>Quarts</th>
+              <th class="num">Régulières</th>
+              <th class="num">Supp.</th>
+              <th class="num">Net</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (report.length === 0) { %>
+          <tr><td colspan="6" class="muted">Aucun employe actif.</td></tr>
+        <% } %>
+        <% report.forEach((r) => { %>
+        <tr>
+          <td><%= r.name %> <span class="muted">(<%= r.username %>)</span></td>
+          <td class="num"><%= r.shifts %><% if (r.openCount) { %> <span class="badge in tiny"><%= r.openCount %> en cours</span><% } %></td>
+          <td class="num"><%= r.regular %></td>
+          <td class="num"><% if (r.hasOt) { %><span class="ot-val"><%= r.overtime %></span><% } else { %><span class="muted">&mdash;</span><% } %></td>
+          <td class="num"><strong><%= r.net %></strong></td>
+          <td><a class="link" href="/admin/employee/<%= r.id %>?p=<%= offset %>">D&eacute;tail</a></td>
+        </tr>
+        <% }) %>
+      </tbody>
+          <tfoot>
+            <tr>
+              <td class="lbl">Total de la période</td>
+              <td></td>
+              <td class="num"><%= grandReg %></td>
+              <td class="num"><%= grandOt %></td>
+              <td class="num green"><%= grandNet %></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <p class="note">Heures supp. = au-delà de 40h/semaine (taux <%= otRate %>×). Pauses déduites automatiquement sur les longs quarts.</p>
+  </main>
+</body>
+</html>

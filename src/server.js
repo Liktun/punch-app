@@ -74,6 +74,9 @@ app.use((req, res, next) => {
   // Active visual theme (admin-configurable) available to every view.
   res.locals.theme = getTheme();
   res.locals.themes = THEMES;
+  res.locals.showThemeBar = false;
+  // Render a screen using the active theme's own view + stylesheet.
+  res.renderThemed = (screen, data = {}) => res.render(`themes/${getTheme()}/${screen}`, data);
   next();
 });
 
@@ -257,12 +260,12 @@ app.get('/', (req, res) => {
     const u = q.userById.get(req.session.uid);
     if (u) return res.redirect(u.is_admin ? '/admin' : '/dashboard');
   }
-  res.render('landing');
+  res.renderThemed('landing');
 });
 
 app.get('/login', (req, res) => {
   if (req.session.uid) return res.redirect('/dashboard');
-  res.render('login', { error: null });
+  res.renderThemed('login', { error: null });
 });
 
 app.post('/login', loginLimiter, verifyCsrf, (req, res) => {
@@ -302,7 +305,7 @@ app.get('/dashboard', requireAuth, (req, res) => {
   const recent = q.recentPunches.all(req.user.id);
   // Break currently in progress on the open shift (if any).
   const openBreak = open ? q.openBreak.get(open.id) : null;
-  res.render('dashboard', {
+  res.renderThemed('dashboard', {
     user: req.user,
     wrapClass: 'dash',
     open,
@@ -416,8 +419,10 @@ app.get('/admin', requireAuth, requireAdmin, (req, res) => {
       shifts: agg.shifts,
     };
   });
-  res.render('admin', {
+  res.renderThemed('admin', {
     user: req.user,
+    showThemeBar: true,
+    screen: 'admin',
     period,
     periodLabel: periodLabel(period),
     offset,
@@ -527,10 +532,10 @@ app.get('/preview/:screen', requireAuth, requireAdmin, (req, res) => {
   const startedAt = new Date(now.getTime() - 6 * 3600_000 - 2 * 60_000);
 
   if (screen === 'landing') {
-    return res.render('landing', { preview: true, screen, user: req.user });
+    return res.renderThemed('landing', { preview: true, screen, showThemeBar: true, user: req.user });
   }
   if (screen === 'login') {
-    return res.render('login', { error: null, preview: true, screen, user: req.user });
+    return res.renderThemed('login', { error: null, preview: true, screen, showThemeBar: true, user: req.user });
   }
   if (screen === 'dashboard') {
     const mk = (h1, m1, h2, m2) => {
@@ -539,10 +544,10 @@ app.get('/preview/:screen', requireAuth, requireAdmin, (req, res) => {
       const b = h2 === null ? null : (() => { const x = new Date(d); x.setHours(h2, m2, 0, 0); return x.toISOString(); })();
       return { clock_in: a.toISOString(), clock_out: b };
     };
-    return res.render('dashboard', {
+    return res.renderThemed('dashboard', {
       user: { full_name: 'Marie Tremblay', is_admin: 0 },
       wrapClass: 'dash',
-      preview: true, screen,
+      preview: true, screen, showThemeBar: true,
       admin: req.user,
       open: { id: 0, clock_in: startedAt.toISOString() },
       openBreak: null,

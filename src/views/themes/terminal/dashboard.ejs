@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon punch — Pointo</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<header class="topbar">
+    <a class="brand" href="/">Pointo</a>
+    <nav>
+      <a class="active" href="/dashboard">Mon punch</a>
+    </nav>
+    <span class="spacer"></span>
+    <span class="who"><%= user.full_name %></span>
+    <a class="logout" href="/login">Déconnexion</a>
+  </header>
+
+  <main class="wrap">
+    <% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %>"><%= flash.msg %></div><% } %>
+
+    <div class="pagehead">
+      <h1 class="greet">Bonjour, <%= user.full_name.split(' ')[0] %> 👋</h1>
+    </div>
+
+    <div class="grid">
+      <!-- Punch card -->
+      <section class="card punch-card">
+        <div class="card-head">
+          <h2>Punch</h2>
+          <span class="tag">tty0 / marie</span>
+        </div>
+        <div class="card-body">
+          <div class="clock" id="clock">14:32:07</div>
+          <div class="shift-status"><span class="pulse"></span> Quart en cours</div>
+          <div class="worked">
+            <span class="val" id="ticker">6h02</span>
+            <span class="lbl">depuis 08:30</span>
+          </div>
+          <button class="btn btn-danger btn-lg" type="button">Punch out</button>
+        </div>
+      </section>
+
+      <!-- Period summary -->
+      <section class="card">
+        <div class="card-head">
+          <h2>Cette période de paie</h2>
+          <span class="tag"><%= periodLabel %></span>
+        </div>
+        <div class="card-body">
+          <div class="total-big"><%= periodNet %></div>
+          <div class="total-lbl">net travaillées</div>
+          <div class="chips">
+            <span class="chip"><%= periodRegular %> régulières</span>
+            <span class="chip accent"><%= periodOvertime %> supp.</span>
+            <span class="chip"><%= periodBreak %> pauses</span>
+            <span class="chip"><%= periodShifts %> quart<%= periodShifts > 1 ? 's' : '' %></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section class="card span-2">
+        <div class="card-head">
+          <h2>Mes derniers punchs</h2>
+          <span class="tag">log --last 4</span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Entrée → Sortie</th>
+                <th class="num">Durée</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>jeu. 15 janv.</td>
+                <td>08:30 → en cours</td>
+                <td class="num"><span class="pill live"><span class="pulse"></span> en cours</span></td>
+              </tr>
+              <tr>
+                <td>mer. 14 janv.</td>
+                <td>08:28 → 17:03</td>
+                <td class="num green">8h05</td>
+              </tr>
+              <tr>
+                <td>mar. 13 janv.</td>
+                <td>08:31 → 16:59</td>
+                <td class="num green">7h58</td>
+              </tr>
+              <tr>
+                <td>lun. 12 janv.</td>
+                <td>08:45 → 17:15</td>
+                <td class="num green">8h00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+<script src="/dashboard.js?v=<%= assetVer %>"></script>
+</body>
+</html>

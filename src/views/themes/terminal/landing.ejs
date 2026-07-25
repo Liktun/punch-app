@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pointo — Gestion des heures</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<main class="landing">
+    <section class="console">
+      <div class="console-bar">
+        <span class="dot-row"><i></i><i></i><i></i></span>
+        <span>pointo — session tty0</span>
+      </div>
+      <div class="console-body">
+        <div class="prompt"><span class="p">&gt;_</span> pointo --start<span class="cursor"></span></div>
+        <h1>Pointo</h1>
+        <p class="tagline">Punch ton arrivée. Punch ton départ. On compte le reste.</p>
+        <div class="cta">
+          <a class="btn btn-lg" href="/login">Se connecter</a>
+        </div>
+        <div class="meta">
+          <span>Version beta</span>
+          <span>Périodes de paie bi-hebdomadaires</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

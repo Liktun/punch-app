@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion — Pointo</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M9 2h6"></path>
+        </svg>
+      </span>
+      Pointo
+    </a>
+    <div class="topbar-spacer"></div>
+  </header>
+
+  <main class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M9 2h6"></path>
+        </svg>
+      </div>
+      <h1 class="auth-title">Connexion</h1>
+      <p class="auth-sub">Entre tes identifiants pour puncher.</p>
+
+      <form>
+        <div class="field">
+          <label for="u">Nom d'utilisateur</label>
+          <input id="u" name="username" type="text" value="marie.tremblay" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="p">Mot de passe</label>
+          <input id="p" name="password" type="password" value="········">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" style="margin-top:10px;">Se connecter</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

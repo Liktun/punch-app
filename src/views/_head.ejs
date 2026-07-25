@@ -4,13 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pointo — Gestion des heures</title>
-  <%# base first, then the theme, so themes can override structural defaults %>
-  <link rel="stylesheet" href="/base.css?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>">
   <link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= typeof assetVer !== 'undefined' ? assetVer : '1' %>">
 </head>
 <body>
-<header class="topbar">
-  <a href="/" class="brand">Point<em>o</em></a>
+<header class="topbar"><div class="topbar-in">
+  <a class="brand" href="/">Pointo</a>
   <nav>
     <% if (typeof user !== 'undefined' && user) { %>
       <% if (user.is_admin) { %>
@@ -22,13 +20,9 @@
       <span class="who"><%= user.full_name %></span>
       <form action="/logout" method="post" class="inline">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
-        <button class="btn ghost">Déconnexion</button>
+        <button class="btn ghost small">Déconnexion</button>
       </form>
     <% } %>
   </nav>
-</header>
-<% if (typeof preview !== 'undefined' && preview) { %>
-<div class="preview-banner">Aperçu — cet écran est une démonstration</div>
-<div class="wrap preview-tools"><%- include('_themebar') %></div>
-<% } %>
+</div></header>
 <main class="wrap <%= typeof wrapClass !== 'undefined' ? wrapClass : '' %>">

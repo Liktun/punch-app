@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pointo — Gestion des heures</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<header class="topbar"><div class="topbar-in">
+  <a class="brand" href="/"><span class="mark"></span>POINT<span class="k">O</span></a>
+  <nav>
+    <a href="/login">Connexion</a>
+    <a href="#">À propos</a>
+  </nav>
+</div></header>
+
+<section class="hero-split">
+  <div class="hero-copy">
+    <p class="kicker">Gestion des heures · beta</p>
+    <h1 class="hero-title">POINT<span class="k">O</span></h1>
+    <p>Punch ton arrivée. Punch ton départ. On compte le reste — heures régulières, supplémentaires et pauses, par période de paie.</p>
+    <a href="/login" class="circle-btn">
+      <span class="ring">
+        <svg class="svg-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </span>
+      <span class="lbl">Se connecter</span>
+    </a>
+    <div class="slider"><span class="cur">01</span><span class="track"></span><span>03</span></div>
+  </div>
+
+  <div class="stage">
+    <div class="red-circle"></div>
+    <div class="red-circle small"></div>
+    <div class="hourglass" aria-label="Sablier gravé animé">
+      <svg viewBox="0 0 300 420" role="img" aria-hidden="false">
+        <defs>
+          <!-- Emboss: dark drop below-right, faint light above-left, so shapes
+               look carved INTO the wall rather than sitting on it. -->
+          <filter id="engrave" x="-20%" y="-20%" width="140%" height="140%">
+            <feOffset in="SourceAlpha" dx="0" dy="2" result="d"/>
+            <feGaussianBlur in="d" stdDeviation="1.6" result="db"/>
+            <feFlood flood-color="#000000" flood-opacity="0.6"/>
+            <feComposite in2="db" operator="in" result="shadow"/>
+            <feOffset in="SourceAlpha" dx="0" dy="-1.4" result="h"/>
+            <feGaussianBlur in="h" stdDeviation="1.1" result="hb"/>
+            <feFlood flood-color="#5a4a44" flood-opacity="0.4"/>
+            <feComposite in2="hb" operator="in" result="hi"/>
+            <feMerge>
+              <feMergeNode in="shadow"/>
+              <feMergeNode in="hi"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <!-- Muted, tonal frame carved from the wall stone. -->
+          <linearGradient id="stoneV" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#241a1c"/>
+            <stop offset=".5" stop-color="#1a1214"/>
+            <stop offset="1" stop-color="#100b0d"/>
+          </linearGradient>
+          <linearGradient id="stoneBar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2c2124"/>
+            <stop offset="1" stop-color="#140e10"/>
+          </linearGradient>
+          <!-- Glass reads as a slightly darker recess. -->
+          <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#000000" stop-opacity=".22"/>
+            <stop offset=".5" stop-color="#ffffff" stop-opacity=".02"/>
+            <stop offset="1" stop-color="#000000" stop-opacity=".14"/>
+          </linearGradient>
+          <!-- Desaturated dried-blood sand, low vibrance. -->
+          <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#8e3f45"/>
+            <stop offset=".5" stop-color="#6e2b31"/>
+            <stop offset="1" stop-color="#471a1f"/>
+          </linearGradient>
+          <clipPath id="topBulb">
+            <path d="M76 96 H224 C224 150 176 188 150 206 C124 188 76 150 76 96 Z"/>
+          </clipPath>
+          <clipPath id="botBulb">
+            <path d="M150 214 C176 232 224 270 224 324 H76 C76 270 124 232 150 214 Z"/>
+          </clipPath>
+        </defs>
+
+        <!-- Everything is engraved; the whole piece flips to loop. -->
+        <g class="flip">
+          <g filter="url(#engrave)">
+            <!-- top & bottom plates + posts, carved from stone -->
+            <rect x="52" y="70" width="196" height="20" rx="6" fill="url(#stoneBar)"/>
+            <rect x="52" y="330" width="196" height="20" rx="6" fill="url(#stoneBar)"/>
+            <rect x="60" y="86" width="12" height="248" rx="5" fill="url(#stoneV)"/>
+            <rect x="228" y="86" width="12" height="248" rx="5" fill="url(#stoneV)"/>
+
+            <!-- glass bulbs as recesses -->
+            <path d="M76 96 H224 C224 150 176 188 150 206 C124 188 76 150 76 96 Z" fill="url(#glass)" stroke="#000" stroke-opacity=".4" stroke-width="2"/>
+            <path d="M150 214 C176 232 224 270 224 324 H76 C76 270 124 232 150 214 Z" fill="url(#glass)" stroke="#000" stroke-opacity=".4" stroke-width="2"/>
+            <!-- center collar -->
+            <rect x="138" y="204" width="24" height="12" rx="3" fill="url(#stoneBar)"/>
+          </g>
+
+          <!-- TOP sand: funnel draining down -->
+          <g clip-path="url(#topBulb)">
+            <g class="sand-top">
+              <rect x="60" y="60" width="180" height="80" fill="url(#sand)"/>
+              <path d="M60 140 H240 L156 206 H144 Z" fill="url(#sand)"/>
+              <path d="M60 140 Q150 156 240 140 V128 H60 Z" fill="#3a1519" opacity=".5"/>
+            </g>
+          </g>
+          <!-- BOTTOM sand: growing pile -->
+          <g clip-path="url(#botBulb)">
+            <g class="sand-bot">
+              <rect x="60" y="300" width="180" height="60" fill="url(#sand)"/>
+              <path d="M60 300 Q150 240 240 300 Z" fill="url(#sand)"/>
+              <path d="M110 300 Q150 268 190 300 Z" fill="#8e3f45" opacity=".35"/>
+            </g>
+          </g>
+
+          <!-- falling stream (dim) -->
+          <rect class="stream" x="149" y="204" width="2.4" height="120" fill="#6e2b31"/>
+
+          <!-- faint carved rim highlight -->
+          <path d="M92 104 C92 138 116 168 138 184" fill="none" stroke="#6a5550" stroke-opacity=".3" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">Pointo beta · heures calculées par période de paie bi-hebdomadaire</footer>
+</body>
+</html>

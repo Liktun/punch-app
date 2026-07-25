@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion — Pointo</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<header class="topbar"><div class="topbar-in">
+  <a class="brand" href="/"><span class="mark"></span>POINT<span class="k">O</span></a>
+  <nav><a href="/login">Connexion</a><a href="#">À propos</a></nav>
+</div></header>
+<main class="wrap">
+  <div class="card artifact narrow" style="margin:40px auto;text-align:center;">
+    <div class="bg-circle" style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 40% 40%,var(--red),var(--red-deep));opacity:.18;"></div>
+    <p class="eyebrow">Accès employé</p>
+    <h1>Connexion</h1>
+    <p style="color:var(--ink-mute);font-size:13px;margin:-8px 0 18px;">Entre tes identifiants pour puncher.</p>
+    <form action="/login" method="post" autocomplete="off">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+      <label>Nom d'utilisateur
+        <input name="username" type="text" required autofocus maxlength="32" autocapitalize="none">
+      </label>
+      <label>Mot de passe
+        <input name="password" type="password" required maxlength="200">
+      </label>
+      <button class="btn primary big" type="submit" style="margin-top:10px;">Se connecter</button>
+    </form>
+  </div>
+</main>
+<footer class="foot">Pointo beta · heures calculées par période de paie bi-hebdomadaire</footer>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<%# Renders the admin theme bar on top of any themed page (admin + previews). %>
+<% if (typeof showThemeBar !== 'undefined' && showThemeBar) { %>
+  <% if (typeof preview !== 'undefined' && preview) { %>
+    <div class="preview-banner">Aperçu — cet écran est une démonstration</div>
+  <% } %>
+  <div class="themebar-host"><%- include('_themebar') %></div>
+<% } %>

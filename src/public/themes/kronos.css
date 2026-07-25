@@ -1,106 +1,161 @@
-/* Kronos — obsidian ground, gold accent, starfield aura. */
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+/* V2 — KRONOS, God of Time. Obsidian ground, gold leaf, cosmic aura.
+   Time is treated as a deity: an orbital clock, an hourglass, engraved serif
+   titles, mono "temporal" data. Punch = a rite marking time. */
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
 :root {
-  --paper:#080611; --card:#15112a; --input-bg:rgba(8,6,17,.6);
-  --ink:#efe9df; --ink-soft:#c3bcd4; --ink-mute:#8a83a3;
-  --line:#2a2145; --line-strong:#3a2f5c;
-  --accent:#c9a24b; --accent-ink:#080611;
-  --ok:#6fd8a8; --ok-soft:rgba(111,216,168,.14); --on-ok:#062018;
-  --warn:#e0b070; --warn-soft:rgba(224,176,112,.14); --on-warn:#1a1200;
-  --danger:#e0708a; --danger-soft:rgba(224,112,138,.12);
-  --display:"Cinzel",Georgia,serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
-  --radius:14px; --radius-sm:9px; --chip-radius:999px;
-  --shadow:0 30px 60px -34px rgba(0,0,0,.8), inset 0 1px 0 rgba(201,162,75,.08);
-  --topbar-bg:rgba(8,6,17,.78);
-  --clock-color:#f0d089; --total-color:#f0d089;
-  --bg-image:
+  --void:#080611; --void-2:#0f0b1d; --panel:#15112a; --panel-2:#1c1636;
+  --gold:#c9a24b; --gold-bright:#f0d089; --gold-dim:#8a733a;
+  --ink:#efe9df; --ink-soft:#c3bcd4; --ink-mute:#8a83a3; --line:#2a2145;
+  --ok:#6fd8a8; --danger:#e0708a;
+  --display:"Cinzel",serif; --serif:"Cormorant Garamond",Georgia,serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+* { box-sizing:border-box; }
+html,body { margin:0; }
+body {
+  font-family:var(--serif); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased;
+  background:
     radial-gradient(1200px 700px at 50% -10%, #241a44 0%, transparent 55%),
-    radial-gradient(1.2px 1.2px at 20% 30%, rgba(240,208,137,.6), transparent),
-    radial-gradient(1px 1px at 70% 60%, rgba(239,233,223,.5), transparent),
-    radial-gradient(1.4px 1.4px at 40% 80%, rgba(201,162,75,.5), transparent),
-    radial-gradient(1px 1px at 85% 25%, rgba(239,233,223,.4), transparent);
-  --bg-size:auto;
+    radial-gradient(900px 500px at 90% 10%, rgba(201,162,75,.10) 0%, transparent 60%),
+    var(--void);
 }
+/* Faint starfield */
+body::before {
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+  background-image:
+    radial-gradient(1.2px 1.2px at 20% 30%, rgba(240,208,137,.7), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgba(239,233,223,.6), transparent),
+    radial-gradient(1.4px 1.4px at 40% 80%, rgba(201,162,75,.6), transparent),
+    radial-gradient(1px 1px at 85% 25%, rgba(239,233,223,.5), transparent),
+    radial-gradient(1px 1px at 15% 70%, rgba(201,162,75,.5), transparent);
+}
+body > * { position:relative; z-index:1; }
+::selection { background:var(--gold); color:var(--void); }
+a { color:inherit; }
+.mono { font-family:var(--mono); }
 
-/* ---- Signature: gilded obsidian ---- */
-/* Gold hairline + inner glow on panels */
-.card, .punch-card, .theme-bar {
-  background: linear-gradient(180deg, #15112a, #0f0b1d);
-  border-color: #3a2f5c;
-}
-.punch-card { border-color: #8a733a; box-shadow: 0 30px 70px -30px rgba(201,162,75,.28), inset 0 1px 0 rgba(240,208,137,.14); }
+.wrap { max-width:780px; margin:0 auto; padding:30px 20px 90px; }
+.topbar { position:sticky; top:52px; z-index:20; background:rgba(8,6,17,.72); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+.topbar-in { max-width:780px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:16px; }
+.brand { font-family:var(--display); font-weight:700; font-size:18px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-bright); text-decoration:none; }
+.topbar nav { margin-left:auto; display:flex; align-items:center; gap:16px; }
+.topbar nav a { font-family:var(--mono); font-size:12px; color:var(--ink-mute); text-decoration:none; }
+.topbar nav a:hover { color:var(--gold-bright); }
+.who { font-family:var(--mono); font-size:11px; color:var(--gold-dim); }
 
-/* Engraved serif headings with wide tracking */
-h1, h2, .brand, .greeting {
-  letter-spacing: .05em; text-transform: uppercase;
-}
-.landing h1 { text-transform: none; letter-spacing: .06em; }
-.landing h1 em { font-style: normal; color: #f0d089; }
-.brand em { color: #f0d089; font-style: normal; }
+.card { position:relative; background:linear-gradient(180deg,var(--panel),var(--void-2));
+  border:1px solid var(--line); border-radius:14px; padding:26px; margin-bottom:20px;
+  box-shadow:0 30px 60px -34px rgba(0,0,0,.8), inset 0 1px 0 rgba(201,162,75,.08); }
+.card.gilt { border-color:var(--gold-dim); box-shadow:0 30px 70px -30px rgba(201,162,75,.28), inset 0 1px 0 rgba(240,208,137,.14); }
+.card.narrow { max-width:430px; }
+.eyebrow { font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.24em; color:var(--gold-dim); margin:0 0 8px; }
+h1 { font-family:var(--display); font-weight:600; font-size:1.7rem; letter-spacing:.04em; margin:0 0 16px; color:var(--ink); }
+h2 { font-family:var(--display); font-weight:500; font-size:1.15rem; letter-spacing:.05em; margin:0 0 16px; }
+.section-title { font-family:var(--mono); font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold-dim); margin:0 0 16px; }
 
-/* Gilded numerals */
-.clock-big, .big-total-val { text-shadow: 0 0 24px rgba(240,208,137,.28); }
-.worked-val { color: #f0d089; }
+label { display:block; margin:16px 0; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.14em; color:var(--ink-mute); }
+input { width:100%; margin-top:8px; padding:12px 13px; border-radius:9px; border:1px solid var(--line);
+  background:rgba(8,6,17,.6); color:var(--ink); font-family:var(--mono); font-size:14px; outline:none; }
+input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,75,.18); }
 
-/* Gold gradient primary actions */
-.btn.primary, .punch-btn.in {
-  background: linear-gradient(135deg,#f0d089,#c9a24b);
-  border-color: #c9a24b; color: #080611; font-weight: 600;
-}
-.punch-btn.out { background: linear-gradient(135deg,#e0708a,#b34f6a); border-color: transparent; color: #fff; }
-.login-logo { border-color: #8a733a; color: #f0d089; background: rgba(8,6,17,.6); }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; font-family:var(--mono); font-size:12px; font-weight:500;
+  text-transform:uppercase; letter-spacing:.12em; cursor:pointer; text-decoration:none; border-radius:10px; padding:12px 18px;
+  border:1px solid var(--gold-dim); background:transparent; color:var(--gold-bright); transition:.18s; }
+.btn:hover { background:rgba(201,162,75,.12); border-color:var(--gold); }
+.btn.primary { background:linear-gradient(135deg,var(--gold),var(--gold-dim)); border-color:var(--gold); color:var(--void); font-weight:600; }
+.btn.primary:hover { filter:brightness(1.08); }
+.btn.big { width:100%; padding:16px; font-size:13px; }
+.btn.ghost { color:var(--ink-soft); }
+.btn.danger { border-color:var(--danger); color:var(--danger); }
+.btn.danger:hover { background:rgba(224,112,138,.12); }
 
-/* Orbital ring behind the login mark */
-.login-logo { position: relative; }
-.login-logo::after {
-  content: ""; position: absolute; inset: -10px; border-radius: 50%;
-  border: 1px dashed rgba(201,162,75,.5);
-  animation: kronos-spin 26s linear infinite;
-}
-@keyframes kronos-spin { to { transform: rotate(360deg); } }
+/* Landing — the temple of time */
+.landing-body { display:grid; place-items:center; min-height:100vh; }
+.landing { text-align:center; max-width:640px; padding:40px 24px; }
+.kicker { font-family:var(--mono); font-size:11px; letter-spacing:.34em; text-transform:uppercase; color:var(--gold-dim); }
+.god-name { font-family:var(--display); font-weight:700; font-size:5rem; line-height:1; margin:16px 0 4px; letter-spacing:.08em;
+  color:transparent; background:linear-gradient(180deg,var(--gold-bright),var(--gold-dim)); -webkit-background-clip:text; background-clip:text; }
+.god-sub { font-family:var(--display); font-size:1rem; letter-spacing:.34em; text-transform:uppercase; color:var(--ink-mute); margin:0 0 8px; }
+.landing-tag { font-family:var(--serif); font-size:1.4rem; font-style:italic; color:var(--ink-soft); margin:22px 0 32px; line-height:1.5; }
+.landing-note { font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-dim); margin-top:28px; }
 
-/* ---- Signature hero: the orbital clock ---- */
-.hero-mark { display: block; }
-.hero-mark .ring.r1 { border: 1px solid #2a2145; }
-.hero-mark .ring.r2 { border: 1px dashed rgba(201,162,75,.35); }
-.hero-mark .ring.r3 { border: 1px solid #8a733a; }
-.hero-mark .core::after {
-  content: "\29D6";            /* hourglass glyph */
-  font-size: 2rem; color: #f0d089;
-  filter: drop-shadow(0 0 14px rgba(240,208,137,.5));
-}
-.hero-mark .orbiter {
-  width: 10px; height: 10px; margin: -5px; background: #f0d089;
-  box-shadow: 0 0 12px #f0d089; transform-origin: 0 0;
-}
-.hero-mark .orbiter.a { animation: kronos-orbit 12s linear infinite; }
-.hero-mark .orbiter.b { animation: kronos-orbit2 26s linear infinite; }
-@keyframes kronos-orbit  { from { transform: rotate(0) translateX(84px); } to { transform: rotate(360deg) translateX(84px); } }
-@keyframes kronos-orbit2 { from { transform: rotate(0) translateX(58px); } to { transform: rotate(-360deg) translateX(58px); } }
+/* Orbital clock */
+.orbit { position:relative; width:200px; height:200px; margin:6px auto 8px; }
+.orbit .ring { position:absolute; inset:0; border-radius:50%; border:1px solid var(--line); }
+.orbit .ring.r2 { inset:26px; border-color:rgba(201,162,75,.35); border-style:dashed; }
+.orbit .ring.r3 { inset:60px; border-color:var(--gold-dim); }
+.orbit .core { position:absolute; inset:0; display:grid; place-items:center; }
+.orbit .core .glyph { font-size:2rem; color:var(--gold-bright); filter:drop-shadow(0 0 14px rgba(240,208,137,.5)); }
+.orbit .planet { position:absolute; top:50%; left:50%; width:10px; height:10px; margin:-5px; border-radius:50%;
+  background:var(--gold-bright); box-shadow:0 0 12px var(--gold-bright); transform-origin:0 0; }
+.spin { animation:orbit 12s linear infinite; }
+.spin.slow { animation-duration:26s; }
+@keyframes orbit { from{transform:rotate(0) translateX(84px)} to{transform:rotate(360deg) translateX(84px)} }
+@keyframes orbit2 { from{transform:rotate(0) translateX(58px)} to{transform:rotate(-360deg) translateX(58px)} }
+.spin.slow { animation-name:orbit2; }
 
-/* Engraved wordmark + subtitle, as in the mockup */
-.landing .wordmark {
-  font-size: 5rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700;
-  background: linear-gradient(180deg,#f0d089,#8a733a);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  margin: 16px 0 4px;
-}
-/* The gilded gradient covers the whole word, so the accent letter just
-   inherits it (kept visible — hiding it would drop the final "o"). */
-.landing .wordmark em { font-style: normal; color: inherit; background: none; }
-.landing .tagline-sub {
-  display: block; font-family: var(--display); font-size: 1rem;
-  letter-spacing: .34em; text-transform: uppercase; color: #8a83a3; margin: 0 0 8px;
-}
-.landing .landing-tag { font-style: italic; font-size: 1.4rem; }
-.landing .rule { display: none; }
+/* Punch card — the rite */
+.hero { text-align:center; }
+.greeting { font-family:var(--serif); font-style:italic; font-size:1.6rem; margin:8px 0 18px; color:var(--ink-soft); }
+.punch-card { text-align:center; }
+.clock-big { font-family:var(--mono); font-size:3rem; font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:2px; line-height:1; color:var(--gold-bright);
+  text-shadow:0 0 24px rgba(240,208,137,.28); }
+.shift-state { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.16em; color:var(--ok); margin:16px 0 4px; }
+.shift-state.idle { color:var(--ink-mute); }
+.live-dot { width:9px; height:9px; border-radius:50%; background:var(--ok); animation:pulse 1.6s infinite; }
+.live-dot.small { width:7px; height:7px; }
+@keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(111,216,168,.5)} 70%{box-shadow:0 0 0 9px rgba(111,216,168,0)} 100%{box-shadow:0 0 0 0 rgba(111,216,168,0)} }
+.worked-now { margin:12px 0 24px; }
+.worked-val { font-family:var(--mono); font-size:2rem; font-weight:600; color:var(--gold-bright); font-variant-numeric:tabular-nums; display:block; }
+.worked-label { font-family:var(--mono); font-size:11px; color:var(--ink-mute); }
+.punch-btn { width:100%; border:0; border-radius:12px; padding:17px; font-family:var(--mono); font-size:13px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.12em; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:10px; }
+.punch-btn.in { background:linear-gradient(135deg,var(--gold-bright),var(--gold)); color:var(--void); }
+.punch-btn.out { background:linear-gradient(135deg,#e0708a,#b34f6a); color:#fff; }
 
-@media (prefers-reduced-motion: reduce) {
-  .login-logo::after, .hero-mark .orbiter { animation: none; }
-}
-@media (max-width: 560px) {
-  .hero-mark { width: 150px; height: 150px; }
-  .landing .wordmark { font-size: 3.2rem; }
-}
+/* Period summary */
+.summary-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.summary-sub { font-family:var(--mono); font-size:11px; color:var(--ink-mute); }
+.big-total { display:flex; align-items:baseline; gap:12px; margin:16px 0; }
+.big-total-val { font-family:var(--mono); font-size:2.7rem; font-weight:600; color:var(--gold-bright); font-variant-numeric:tabular-nums; line-height:1;
+  text-shadow:0 0 22px rgba(240,208,137,.25); }
+.big-total-label { font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-mute); }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip { display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px; color:var(--ink-soft);
+  border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:rgba(8,6,17,.4); }
+.chip-dot { width:8px; height:8px; border-radius:50%; }
+.chip-dot.reg{background:var(--gold)} .chip-dot.ot{background:var(--danger)} .chip-dot.brk{background:var(--ink-mute)}
+
+/* History */
+.punch-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
+.punch-item { display:flex; align-items:center; justify-content:space-between; padding:13px 2px; border-bottom:1px solid var(--line); }
+.punch-item:last-child { border-bottom:0; }
+.punch-day { font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--gold-dim); display:block; }
+.punch-times { font-family:var(--mono); font-size:13px; font-variant-numeric:tabular-nums; color:var(--ink-soft); }
+.punch-arrow { color:var(--gold-dim); }
+.dur-pill { font-family:var(--mono); font-size:12px; font-weight:600; color:var(--gold-bright); border:1px solid var(--gold-dim); border-radius:999px; padding:4px 12px; }
+.dur-pill.live { color:var(--ok); border-color:var(--ok); display:inline-flex; align-items:center; gap:6px; }
+
+/* Table */
+.period-nav { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
+.period-label { font-family:var(--mono); font-size:12px; color:var(--ink-soft); }
+.period-label em { color:var(--gold-bright); font-style:normal; }
+table { width:100%; border-collapse:collapse; }
+th,td { text-align:left; padding:12px 10px; border-bottom:1px solid var(--line); font-size:13px; }
+th { font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--gold-dim); font-weight:500; }
+td.num,th.num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+tfoot .grand td { border-top:2px solid var(--gold-dim); font-family:var(--mono); }
+tfoot .grand strong { color:var(--gold-bright); }
+.ot-val { color:var(--danger); }
+.muted { color:var(--ink-mute); }
+.badge { font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; border:1px solid var(--ok); color:var(--ok); border-radius:999px; padding:2px 8px; }
+.link { color:var(--gold-bright); text-decoration:none; font-family:var(--mono); font-size:12px; }
+.link:hover { text-decoration:underline; }
+.small { font-size:.82rem; }
+
+.flash { font-family:var(--mono); font-size:12px; padding:12px 13px; border-radius:9px; margin-bottom:16px; border:1px solid var(--gold-dim);
+  color:var(--gold-bright); background:rgba(201,162,75,.08); }
+.flash.ok { border-color:var(--ok); color:var(--ok); background:rgba(111,216,168,.08); }
+
+.foot { text-align:center; font-family:var(--mono); font-size:10px; color:var(--gold-dim); padding:26px; letter-spacing:.14em; text-transform:uppercase; }
+@media (max-width:560px){ .god-name{font-size:3.6rem} .clock-big{font-size:2.5rem} }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion — Pointo</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<header class="topbar">
+    <a class="brand" href="/">Pointo</a>
+    <span class="spacer"></span>
+  </header>
+
+  <main class="auth">
+    <div class="card">
+      <div class="card-body">
+        <h1>Connexion</h1>
+        <p class="sub">Entre tes identifiants pour puncher.</p>
+        <form>
+          <div class="field">
+            <label for="username">[ Identifiant ]</label>
+            <input id="username" name="username" type="text" value="marie.tremblay" autocomplete="username">
+          </div>
+          <div class="field">
+            <label for="password">[ Mot de passe ]</label>
+            <input id="password" name="password" type="password" value="········" autocomplete="current-password">
+          </div>
+          <button class="btn btn-block" type="submit">Se connecter</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

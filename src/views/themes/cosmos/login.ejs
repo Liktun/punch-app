@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion — Pointo</title>
+<link rel="stylesheet" href="/themes/<%= theme %>.css?v=<%= assetVer %>">
+</head>
+<body class="">
+<%- include('../../_themebar_wrap') %>
+<canvas id="cosmos" aria-hidden="true"></canvas>
+  <header class="topbar"><div class="topbar-in"><a class="brand" href="/"><span class="orb"></span>Pointo</a></div></header>
+  <main class="wrap">
+    <div class="card feature narrow" style="margin:40px auto;text-align:center;">
+      <div class="planet" style="width:88px;height:88px;"><span class="ring"></span><span class="body"></span></div>
+      <p class="eyebrow">Accès employé</p>
+      <h1>Connexion</h1>
+      <p style="color:var(--ink-mute);font-size:13px;margin:-8px 0 18px;">Entre tes identifiants pour puncher.</p>
+      <form action="/login" method="post" autocomplete="off">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+      <label>Nom d'utilisateur
+        <input name="username" type="text" required autofocus maxlength="32" autocapitalize="none">
+      </label>
+      <label>Mot de passe
+        <input name="password" type="password" required maxlength="200">
+      </label>
+        <button class="btn primary big" type="submit" style="margin-top:10px;">Se connecter</button>
+      </form>
+    </div>
+  </main>
+  <footer class="foot">Pointo beta · heures calculées par période de paie bi-hebdomadaire</footer>
+
+<script src="cosmos.js"></script>
+</body>
+</html>
