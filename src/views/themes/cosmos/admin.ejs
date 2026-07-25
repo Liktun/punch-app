@@ -13,9 +13,9 @@
     <a class="brand" href="/"><span class="orb"></span>Pointo</a>
     <nav>
       <a href="/admin">Rapport</a>
-      <a href="#">Employés</a>
+      <a href="/admin/employees">Employés</a>
       <span class="who"><%= user.full_name %></span>
-      <a href="/login">Déconnexion</a>
+      <form action="/logout" method="post" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="link-logout" type="submit">Déconnexion</button></form>
     </nav>
   </div></header>
 

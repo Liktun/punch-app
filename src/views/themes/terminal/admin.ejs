@@ -12,18 +12,18 @@
     <a class="brand" href="/">Pointo</a>
     <nav>
       <a class="active" href="/admin">Rapport</a>
-      <a href="#">Employés</a>
+      <a href="/admin/employees">Employés</a>
     </nav>
     <span class="spacer"></span>
     <span class="who"><%= user.full_name %></span>
-    <a class="logout" href="/login">Déconnexion</a>
+    <form action="/logout" method="post" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="logout" type="submit">Déconnexion</button></form>
   </header>
 
   <main class="wrap">
     <h1 class="page-title">Rapport des heures</h1>
 
     <div class="periodnav">
-      <a class="btn btn-ghost" href="#">← Précédente</a>
+      <a class="btn btn-ghost" href="/admin?p=<%= offset - 1 %>">← Précédente</a>
       <span class="label"><%= periodLabel %><% if (offset === 0) { %> <em>(courante)</em><% } %></span>
       <span class="btn btn-ghost" aria-disabled="true">Suivante →</span>
     </div>

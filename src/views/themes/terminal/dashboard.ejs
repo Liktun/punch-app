@@ -16,7 +16,7 @@
     </nav>
     <span class="spacer"></span>
     <span class="who"><%= user.full_name %></span>
-    <a class="logout" href="/login">Déconnexion</a>
+    <form action="/logout" method="post" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="logout" type="submit">Déconnexion</button></form>
   </header>
 
   <main class="wrap">

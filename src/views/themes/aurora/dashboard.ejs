@@ -23,7 +23,7 @@
     </nav>
     <div class="topbar-spacer"></div>
     <span class="topbar-who"><span class="avatar" aria-hidden="true">MT</span> <%= user.full_name %></span>
-    <a class="btn-logout" href="/login">Déconnexion</a>
+    <form action="/logout" method="post" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn-logout" type="submit">Déconnexion</button></form>
   </header>
 
   <main class="page">

@@ -19,11 +19,11 @@
     </a>
     <nav class="topnav">
       <a href="/admin" class="active">Rapport</a>
-      <a href="#">Employés</a>
+      <a href="/admin/employees">Employés</a>
     </nav>
     <div class="topbar-spacer"></div>
     <span class="topbar-who"><span class="avatar" aria-hidden="true">AD</span> <%= user.full_name %></span>
-    <a class="btn-logout" href="/login">Déconnexion</a>
+    <form action="/logout" method="post" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn-logout" type="submit">Déconnexion</button></form>
   </header>
 
   <main class="page">
@@ -31,7 +31,7 @@
     <p class="page-sub">Vue consolidée de la période de paie courante.</p>
 
     <div class="period-nav">
-      <a class="btn btn-ghost" href="#">← Précédente</a>
+      <a class="btn btn-ghost" href="/admin?p=<%= offset - 1 %>">← Précédente</a>
       <span class="period-label"><%= periodLabel %><% if (offset === 0) { %> <em>(courante)</em><% } %></span>
       <span class="btn btn-ghost" aria-disabled="true" style="opacity:.45;pointer-events:none;">Suivante →</span>
     </div>
@@ -45,32 +45,19 @@
           </tr>
         </thead>
         <tbody>
+          <% if (report.length === 0) { %>
+            <tr><td colspan="6" class="muted">Aucun employé actif.</td></tr>
+          <% } %>
+          <% report.forEach((r) => { %>
           <tr>
-            <td class="emp">Marie Tremblay <small>marie.tremblay</small></td>
-            <td class="num">6 <span class="badge"><span class="dot"></span>1 en cours</span></td>
-            <td class="num">40h00</td>
-            <td class="num ot-val">1h48</td>
-            <td class="num"><strong>41h48</strong></td>
-            <td><a class="link" href="#">Détail</a></td>
+            <td class="emp"><%= r.name %> <small><%= r.username %></small></td>
+            <td class="num"><%= r.shifts %><% if (r.openCount) { %> <span class="badge"><span class="dot"></span><%= r.openCount %> en cours</span><% } %></td>
+            <td class="num"><%= r.regular %></td>
+            <td class="num <%= r.hasOt ? 'ot-val' : 'muted' %>"><%= r.hasOt ? r.overtime : '—' %></td>
+            <td class="num"><strong><%= r.net %></strong></td>
+            <td><a class="link" href="/admin/employee/<%= r.id %>?p=<%= offset %>">Détail</a></td>
           </tr>
-          <tr>
-            <td class="emp">Luc Gagnon <small>luc.gagnon</small></td>
-            <td class="num">5</td><td class="num">37h30</td>
-            <td class="num muted">—</td><td class="num"><strong>37h30</strong></td>
-            <td><a class="link" href="#">Détail</a></td>
-          </tr>
-          <tr>
-            <td class="emp">Sophie Roy <small>sophie.roy</small></td>
-            <td class="num">6</td><td class="num">40h00</td>
-            <td class="num ot-val">3h15</td><td class="num"><strong>43h15</strong></td>
-            <td><a class="link" href="#">Détail</a></td>
-          </tr>
-          <tr>
-            <td class="emp">Ahmed Benali <small>ahmed.benali</small></td>
-            <td class="num">4</td><td class="num">31h00</td>
-            <td class="num muted">—</td><td class="num"><strong>31h00</strong></td>
-            <td><a class="link" href="#">Détail</a></td>
-          </tr>
+          <% }) %>
         </tbody>
         <tfoot>
           <tr>
