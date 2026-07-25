@@ -1,127 +1,177 @@
-# Pointo — Web app de gestion des heures (beta)
+# Pointo — Time clock & hours management (beta)
 
-Punch d'arrivée/départ des employés, calcul des heures travaillées par **période de paie bi-hebdomadaire**, déduction de pauses, heures supplémentaires, et vue admin avec corrections.
+Employees punch in and out, punch their own breaks, and the app computes worked
+hours per **bi-weekly pay period**, splits regular vs. overtime, and gives
+admins a report with correction tools.
 
-**Live** : https://fbtest02.com
+**Live**: https://fbtest02.com
+
+The user-facing interface is in **French**; this document is in English.
 
 ---
 
-## Fonctionnalités
+## Features
 
-- **Landing** : page d'accueil publique (nom + « Se connecter »).
-- **Employé** : login/mot de passe, punch arrivée / départ, horloge + compteur en direct, total net de la période avec ventilation régulières / supp. / pauses.
-- **Admin** :
-  - Rapport par employé (régulières, supp., net) avec grand total, navigation entre périodes.
-  - **Corrections d'oublis** : ajouter / éditer / supprimer un quart, avec validation (départ > arrivée, anti-chevauchement) et flag « modifié ».
-  - Gestion des employés (créer, activer/désactiver).
-- **Pauses punchées** : l'employé punche le début et la fin de chaque pause. Le temps de pause réel est déduit du quart (aucune déduction automatique). Le départ est bloqué tant qu'une pause est en cours.
-- **Heures supplémentaires** : au-delà de 40 h/semaine (Lun–Dim), calculées par semaine à l'intérieur de la période, affichées séparément (taux configurable).
-- **Périodes de paie** : bi-hebdomadaires, alignées sur une date d'ancrage configurable (`.env`).
+- **Landing** — public entry page (app name + sign in).
+- **Employee** — username/password login, punch in / punch out, punch breaks,
+  live clock and running counters, net total for the current period broken down
+  into regular / overtime / breaks, and recent shift history.
+- **Admin**
+  - Report per employee (regular, overtime, net) with a grand total and
+    navigation between pay periods.
+  - **Missed-punch corrections**: add / edit / delete a shift, with validation
+    (clock-out after clock-in, no overlap) and an "edited" flag plus note.
+  - Employee management (create, activate/deactivate).
+  - **Theme selector**: pick the app-wide visual theme and preview every screen.
+- **Punched breaks** — the employee punches the start and end of each break.
+  Actual break time is deducted from the shift; there is **no automatic
+  deduction**. Punching out is blocked while a break is still open.
+- **Overtime** — beyond 40 h/week (Mon–Sun), computed per week inside the
+  period and displayed separately (rate configurable).
+- **Pay periods** — bi-weekly, aligned on a configurable anchor date (`.env`).
 
-## Fonctionnalités additionnelles
+## Themes
 
-Ajouts au-delà du cœur du mandat (punch + calcul + vue admin) :
+The app ships **7 complete visual worlds**. Each theme is a full stylesheet plus
+its own set of views, not a colour variation — layout, type, components and
+motion all change.
 
-- **Page d'accueil (landing)** publique et moderne avec nom de l'app et accès rapide à la connexion.
-- **Corrections d'oublis (admin)** : CRUD complet sur les quarts (ajout / édition / suppression) pour gérer les punchs manqués, avec validation et traçabilité (flag « modifié » + note).
-- **Pauses punchées** : bouton « Punch pause » / « Reprendre le travail », compteur de pause en direct, plusieurs pauses par quart, total réel déduit du net.
-- **Galerie de thèmes** (`/themes`) : 7 directions visuelles du frontend, navigables via une barre de sélection.
-- **Heures supplémentaires hebdomadaires** (>40 h/semaine) calculées et affichées séparément des heures régulières, taux configurable.
-- **UX temps réel** côté employé : horloge en direct + compteur de durée du quart en cours.
-- **Sécurité renforcée** : protection CSRF sur tous les formulaires, rate limiting sur la connexion, CSP stricte, en-têtes HSTS/X-Frame.
-- **Performance** : compression gzip, cache navigateur des assets, agrégation en une seule requête (pas de N+1).
-- **CI/CD** : redéploiement automatique sur `git push` via GitHub Actions + clé SSH dédiée (user à privilèges restreints).
-- **Tests** : suite de vérification du calcul des heures (pauses, overtime, découpage hebdomadaire).
+| Theme | World |
+|---|---|
+| Éditorial | Warm paper, halftone texture, serif + mono, signal red |
+| Kronos | Obsidian and gold, orbital clock, starfield |
+| Landscape | Layered ridgelines, earthy palette, frosted panels |
+| Atelier | Cold slate night, fog bank, frosted glass, pale brass |
+| Terminal | Dark technical grid, phosphor green, scanlines |
+| Artifact | Near-black ground, monochrome red, heavy condensed caps |
+| Cosmos | Pure black & white, interactive drifting starfield |
 
-## Stack & choix
+- **Only an admin can change the theme**, from the Report page. The choice is
+  stored in the `settings` table and applies to every user.
+- The theme bar also **previews each screen** (landing, login, employee, admin)
+  in the selected theme without leaving the admin account.
+- `revamp/` holds the original standalone mockups, served read-only at
+  `/themes` for reference.
 
-| Élément | Choix | Pourquoi |
-|--------|-------|----------|
-| Runtime | Node.js + Express | Léger, un seul process, déploiement simple |
-| DB | SQLite (better-sqlite3, WAL) | Zéro service externe ; backup = copie de fichier ; suffisant pour une beta punch |
-| Vues | EJS (server-rendered) | Pas de build front, pas de SPA inutile |
-| Auth | express-session + bcrypt | Session cookie httpOnly ; hash bcrypt (coût 12) |
-| Process manager | **systemd** | Reste up après déconnexion SSH et au reboot ; hardening natif |
-| Reverse proxy | **Apache** (mod_proxy) → 127.0.0.1:3000 | Le VPS partage cPanel/Apache ; SSL Let's Encrypt |
-| Redéploiement | GitHub Actions → SSH (`deploy.sh`) | `git pull` + `npm install` + `systemctl restart`, reproductible |
+## Stack & decisions
 
-**Pourquoi login/mot de passe et pas un PIN** : chaque punch est attribué à un compte authentifié. Un PIN affiché dans une liste serait trivial à usurper. (Vrai anti-fraude — photo, géoloc, badge — hors scope beta.)
+| Piece | Choice | Why |
+|---|---|---|
+| Runtime | Node.js + Express | Light, single process, simple deployment |
+| DB | SQLite (better-sqlite3, WAL) | No external service; backup = file copy; enough for a beta |
+| Views | EJS (server-rendered) | No front-end build, no needless SPA |
+| Auth | express-session + bcrypt | httpOnly session cookie; bcrypt cost 12 |
+| Process manager | **systemd** | Survives SSH disconnect and reboot; native hardening |
+| Reverse proxy | **Apache** (mod_proxy) → 127.0.0.1:3000 | The VPS already runs cPanel/Apache; Let's Encrypt SSL |
+| Redeploy | GitHub Actions → SSH (`deploy.sh`) | `git pull` + `npm install` + `systemctl restart`, reproducible |
 
-## Sécurité (beta)
+**Why login/password instead of a PIN**: every punch is attributed to an
+authenticated account. A PIN shown in a list would be trivial to spoof. (Real
+anti-fraud — photo, geolocation, badge — is out of scope for the beta.)
 
-- Secrets **hors du repo** : `.env` vit uniquement sur le serveur (`.gitignore`).
-- `helmet` + CSP stricte (pas de script inline ; le JS client est servi en fichier statique).
-- **CSRF** : jeton par session injecté dans chaque formulaire, vérifié sur tous les POST.
-- Cookies `httpOnly`/`sameSite`/`secure`.
-- **Rate limiting** sur `/login` (anti-brute-force).
-- Validation/sanitization de tous les inputs (regex username, longueurs, etc.).
-- Comparaison bcrypt même si l'utilisateur n'existe pas (anti-énumération par timing).
-- App bindée sur `127.0.0.1` : joignable seulement via le reverse proxy.
-- Requêtes SQL **paramétrées** (prepared statements) — pas d'injection.
-- systemd durci (`NoNewPrivileges`, `ProtectSystem`, `ReadWritePaths` limité aux données).
-- CI/CD : déploiement par **clé SSH dédiée** + user `punchdeploy` limité à un seul script via `sudo` (pas de root dans les secrets).
+## Security
 
-## Performance (mesuré, Phase 5)
+- Secrets **outside the repo**: `.env` lives only on the server (`.gitignore`).
+- `helmet` + strict CSP (`script-src 'self'`) — no inline scripts or event
+  handlers; all client JS is served as static files.
+- **CSRF**: per-session token injected into every form, verified on all POSTs.
+- Cookies `httpOnly` / `sameSite` / `secure`.
+- **Rate limiting** on `/login` (anti brute-force).
+- All inputs validated and sanitized (username regex, length caps).
+- bcrypt comparison runs even when the user does not exist (blocks timing-based
+  enumeration).
+- App bound to `127.0.0.1`: reachable only through the reverse proxy.
+- **Parameterized** SQL (prepared statements) — no injection.
+- Hardened systemd unit (`NoNewPrivileges`, `ProtectSystem`, `ReadWritePaths`
+  limited to the data directory).
+- CI/CD deploys with a **dedicated SSH key** and a `punchdeploy` user restricted
+  to a single script via `sudo` (no root credentials in secrets).
+- Theme changes are admin-only and the value is validated against an allowlist.
 
-- **Rapport admin** : une seule requête SQL groupée (JOIN + GROUP BY) au lieu d'une requête par employé → **N+1 éliminé**. Temps `/admin` ~8 ms.
-- **Compression gzip** activée (`compression`) : page admin 2064 B → 874 B (-58 %).
-- **Cache navigateur** sur les assets statiques (7 j) + ETag.
-- Index SQLite sur `punches(employee_id, clock_in)` et sur les quarts ouverts.
+## Performance
 
-## UX (Phase 4)
+- **Admin report**: one grouped SQL query (JOIN + GROUP BY) instead of one query
+  per employee → **N+1 eliminated**. `/admin` renders in ~8 ms. Breaks are
+  loaded the same way, in a single query.
+- **gzip compression** enabled: admin page 2064 B → 874 B (−58 %).
+- **Browser caching** on static assets (7 days) + ETag, with a cache-busting
+  asset version derived from the newest stylesheet mtime.
+- SQLite indexes on `punches(employee_id, clock_in)`, on open shifts, and on
+  `breaks(punch_id)`.
 
-- Horloge en direct + compteur de durée du quart en cours (JS statique, compatible CSP).
-- Confirmation avant chaque punch.
-- Rapport admin : ligne **Total de la période** (grand total).
-- Navigation « période suivante » désactivée quand on est déjà à la période courante.
+## UX
 
-## Edge cases gérés
+- Live clock plus running shift and break counters (static JS, CSP-safe).
+- Confirmation before punching in or out.
+- Admin report has a **period total** row.
+- "Next period" is disabled when already on the current one.
+- `prefers-reduced-motion` respected across all themes.
 
-- Double punch d'arrivée bloqué (quart déjà ouvert).
-- Punch départ sans quart ouvert → message, pas d'erreur.
-- Quart ouvert (départ oublié) : exclu des totaux, signalé « en cours ».
-- Durée négative (horloge/skew) ramenée à 0.
-- Session régénérée à la connexion (anti fixation) ; nouveau jeton CSRF après régénération.
-- Employé désactivé pendant sa session → déconnecté.
-- POST sans jeton CSRF valide → 403.
+## Edge cases handled
+
+- Double punch-in blocked (a shift is already open).
+- Punch out with no open shift → message, not an error.
+- **Punch out blocked while a break is open** — the break must be closed first.
+- An open break counts as zero until it is closed.
+- Break durations are clamped to their shift, so a bad correction can never
+  push net time negative.
+- Open shift (forgotten punch out): excluded from totals, flagged "en cours".
+- Negative duration (clock skew) floored at 0.
+- Session regenerated on login (anti-fixation); fresh CSRF token afterwards.
+- Employee deactivated mid-session → logged out.
+- POST without a valid CSRF token → 403.
+- Unknown theme id → falls back to the default theme.
 
 ## Structure
 
 ```
-src/server.js       routes, auth, logique punch, bootstrap admin
-src/db.js           schéma SQLite + index
-src/payperiod.js    calcul des périodes bi-hebdo
-src/views/          EJS
-src/public/         CSS
-revamp/             maquettes des thèmes frontend (servies sur /themes)
-scripts/seed.js     données de démo
-deploy/             systemd unit + deploy.sh
-.github/workflows/  déploiement SSH
+src/server.js            routes, auth, punch logic, admin bootstrap
+src/db.js                SQLite schema, migrations + indexes
+src/hours.js             hours math: punched breaks + weekly overtime
+src/payperiod.js         bi-weekly period computation
+src/themes.js            theme catalog + persisted setting
+src/views/themes/<id>/   per-theme views (landing, login, dashboard, admin)
+src/views/               shared admin views (employees, detail, error, theme bar)
+src/public/themes/       one stylesheet per theme
+src/public/              shared assets (themebar.css, punch.css, dashboard.js)
+revamp/                  original mockups, served at /themes
+scripts/seed.js          demo data
+scripts/test-hours.js    hours test suite
+deploy/                  systemd unit + deploy.sh
+.github/workflows/       SSH deployment
+PRODUCT.md               durable product truth (users, mechanism, constraints)
 ```
 
-## Installation locale
+## Local setup
 
 ```bash
 npm install
-cp .env.example .env   # éditer les valeurs
-npm run seed           # (optionnel) données démo
+cp .env.example .env   # edit the values
+npm run seed           # optional demo data
 npm start
 ```
 
-## Déploiement VPS (résumé)
+Demo accounts after seeding: `marie` / `alex`, password `demo1234`.
+The admin account comes from `ADMIN_USER` / `ADMIN_PASSWORD` in `.env`.
 
-1. `git clone` dans `/opt/punch-app`, créer l'utilisateur système `punch`.
-2. `npm install --omit=dev`, créer `/opt/punch-app/.env`.
-3. Installer le unit systemd (`deploy/punch-app.service`), `systemctl enable --now punch-app`.
-4. Vhost Apache reverse proxy `fbtest02.com` → `127.0.0.1:3000` + SSL.
-5. Push sur `main` → GitHub Actions redéploie via SSH.
+## VPS deployment (summary)
 
-## Configuration (extraits `.env`)
+1. `git clone` into `/opt/punch-app`, create the `punch` system user.
+2. `npm install --omit=dev`, create `/opt/punch-app/.env`.
+3. Install the systemd unit (`deploy/punch-app.service`), then
+   `systemctl enable --now punch-app`.
+4. Apache vhost reverse-proxying `fbtest02.com` → `127.0.0.1:3000` + SSL.
+5. Push to `main` → GitHub Actions redeploys over SSH.
+
+Schema changes (the `breaks` and `settings` tables) are applied automatically on
+boot, so no manual migration step is needed.
+
+## Configuration (`.env` excerpt)
 
 ```
-# Les pauses sont punchées par l'employé : rien à configurer.
-OVERTIME_WEEKLY_HOURS=40    # seuil hebdo overtime
-OVERTIME_RATE=1.5           # info d'affichage
+# Breaks are punched by the employee — nothing to configure.
+OVERTIME_WEEKLY_HOURS=40    # weekly overtime threshold
+OVERTIME_RATE=1.5           # display only
 PAY_PERIOD_ANCHOR=2026-01-05
 PAY_PERIOD_DAYS=14
 TZ=America/Toronto
@@ -129,12 +179,13 @@ TZ=America/Toronto
 
 ## Tests
 
-`node scripts/test-hours.js` — vérifie les pauses punchées (simples, multiples, en cours, bornées au quart), l'overtime hebdomadaire et le split correct par semaine.
+`node scripts/test-hours.js` — covers punched breaks (single, multiple, still
+open, out of bounds), weekly overtime and the correct per-week split.
 
-## Ce que je ferais avec plus de temps
+## With more time
 
-- Export CSV/PDF des périodes de paie.
-- Arrondis configurables (5/15 min), gestion de pauses par punch explicite.
-- Rôles multiples (gérants par équipe), audit log complet des corrections.
-- Object cache (Valkey) si montée en charge ; migrations DB versionnées.
-- Backups automatisés testés (cron `sqlite3 .backup` + rétention).
+- CSV/PDF export of pay periods.
+- Configurable rounding (5/15 min).
+- Multiple roles (team managers), full audit log of corrections.
+- Object cache (Valkey) if load grows; versioned DB migrations.
+- Tested automated backups (cron `sqlite3 .backup` + retention).
