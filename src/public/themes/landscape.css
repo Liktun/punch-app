@@ -1,0 +1,23 @@
+/* Tech Landscape — natural ridgeline backdrop, earthy palette, large serif. */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  --paper:#0a1518; --card:rgba(12,26,29,.72); --input-bg:rgba(10,21,24,.5);
+  --ink:#f4efe3; --ink-soft:#cdc7b6; --ink-mute:#8f9488;
+  --line:rgba(233,220,196,.16); --line-strong:rgba(233,220,196,.3);
+  --accent:#e8a24a; --accent-ink:#1a1200;
+  --ok:#6fcaa6; --ok-soft:rgba(111,202,166,.14); --on-ok:#06201a;
+  --warn:#e8a24a; --warn-soft:rgba(232,162,74,.14); --on-warn:#1a1200;
+  --danger:#d9744e; --danger-soft:rgba(217,116,78,.14);
+  --display:"Fraunces",Georgia,serif;
+  --mono:"Inter",system-ui,sans-serif;
+  --radius:20px; --radius-sm:12px; --chip-radius:999px;
+  --shadow:0 26px 60px -30px rgba(0,0,0,.75);
+  --topbar-bg:rgba(10,21,24,.7);
+  --clock-font:"Fraunces",Georgia,serif;
+  --bg-image:
+    radial-gradient(900px 380px at 78% 8%, rgba(232,162,74,.20), transparent 60%),
+    radial-gradient(120% 260px at 45% 100%, #16323a 0 60%, transparent 61%),
+    radial-gradient(1100px 520px at 50% 0%, #123038, #0d1c22 60%);
+  --bg-size:auto;
+}

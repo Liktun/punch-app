@@ -1,0 +1,23 @@
+/* Terminal — dark technical grid, phosphor green, monospace throughout. */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+:root {
+  --paper:#05070a; --card:#0a0e14; --input-bg:#05070a;
+  --ink:#d7e2e0; --ink-soft:#9fb0ae; --ink-mute:#5d6f6c;
+  --line:#1b2530; --line-strong:#28353f;
+  --accent:#39d98a; --accent-ink:#04140c;
+  --ok:#39d98a; --ok-soft:rgba(57,217,138,.12); --on-ok:#04140c;
+  --warn:#e8b84a; --warn-soft:rgba(232,184,74,.12); --on-warn:#150f00;
+  --danger:#ff6b6b; --danger-soft:rgba(255,107,107,.12);
+  --display:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --radius:4px; --radius-sm:3px; --chip-radius:3px;
+  --shadow:0 0 0 1px rgba(57,217,138,.06), 0 18px 40px -26px rgba(0,0,0,.9);
+  --topbar-bg:rgba(5,7,10,.85);
+  --clock-color:#39d98a; --total-color:#39d98a;
+  /* faint technical grid */
+  --bg-image:
+    linear-gradient(rgba(57,217,138,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,217,138,.045) 1px, transparent 1px);
+  --bg-size:36px 36px, 36px 36px;
+}

@@ -1,0 +1,22 @@
+/* Artifact — near-black ground, monochromatic red, bold uppercase sans. */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  --paper:#0d0b0c; --card:#171213; --input-bg:#0a0809;
+  --ink:#f5eef0; --ink-soft:#c9bcbf; --ink-mute:#8a7b7e;
+  --line:#2a1e21; --line-strong:#3a2a2d;
+  --accent:#ff2740; --accent-ink:#ffffff;
+  --ok:#ff5568; --ok-soft:rgba(255,85,104,.12); --on-ok:#ffffff;
+  --warn:#e8a24a; --warn-soft:rgba(232,162,74,.12); --on-warn:#150f00;
+  --danger:#ff2740; --danger-soft:rgba(255,39,64,.12);
+  --display:"Archivo",system-ui,sans-serif;
+  --mono:"Inter",system-ui,sans-serif;
+  --radius:18px; --radius-sm:10px; --chip-radius:999px;
+  --shadow:0 30px 70px -34px rgba(0,0,0,.85);
+  --topbar-bg:rgba(13,11,12,.82);
+  --clock-font:"Archivo",system-ui,sans-serif;
+  --bg-image:
+    radial-gradient(900px 620px at 82% 30%, rgba(200,16,46,.16), transparent 60%),
+    radial-gradient(700px 520px at 6% 92%, rgba(200,16,46,.10), transparent 60%);
+  --bg-size:auto;
+}

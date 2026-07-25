@@ -1,0 +1,25 @@
+/* Kronos — obsidian ground, gold accent, starfield aura. */
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  --paper:#080611; --card:#15112a; --input-bg:rgba(8,6,17,.6);
+  --ink:#efe9df; --ink-soft:#c3bcd4; --ink-mute:#8a83a3;
+  --line:#2a2145; --line-strong:#3a2f5c;
+  --accent:#c9a24b; --accent-ink:#080611;
+  --ok:#6fd8a8; --ok-soft:rgba(111,216,168,.14); --on-ok:#062018;
+  --warn:#e0b070; --warn-soft:rgba(224,176,112,.14); --on-warn:#1a1200;
+  --danger:#e0708a; --danger-soft:rgba(224,112,138,.12);
+  --display:"Cinzel",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --radius:14px; --radius-sm:9px; --chip-radius:999px;
+  --shadow:0 30px 60px -34px rgba(0,0,0,.8), inset 0 1px 0 rgba(201,162,75,.08);
+  --topbar-bg:rgba(8,6,17,.78);
+  --clock-color:#f0d089; --total-color:#f0d089;
+  --bg-image:
+    radial-gradient(1200px 700px at 50% -10%, #241a44 0%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 20% 30%, rgba(240,208,137,.6), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgba(239,233,223,.5), transparent),
+    radial-gradient(1.4px 1.4px at 40% 80%, rgba(201,162,75,.5), transparent),
+    radial-gradient(1px 1px at 85% 25%, rgba(239,233,223,.4), transparent);
+  --bg-size:auto;
+}

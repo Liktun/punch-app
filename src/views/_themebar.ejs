@@ -1,0 +1,20 @@
+<%# Admin-only theme selector. Applies app-wide for every user. %>
+<div class="theme-bar">
+  <div class="theme-bar-head">
+    <span class="theme-bar-title">Thème de l'application</span>
+    <span class="theme-bar-current">
+      Actif : <b><%= (themes.find((t) => t.id === theme) || {}).label %></b>
+    </span>
+  </div>
+  <div class="theme-list">
+    <% themes.forEach((t) => { %>
+      <form action="/admin/theme" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="theme" value="<%= t.id %>">
+        <input type="hidden" name="back" value="<%= typeof themeBack !== 'undefined' ? themeBack : 'admin' %>">
+        <button class="theme-opt" type="submit" title="<%= t.hint %>"
+          <%= t.id === theme ? 'aria-current="true"' : '' %>><%= t.label %></button>
+      </form>
+    <% }) %>
+  </div>
+</div>

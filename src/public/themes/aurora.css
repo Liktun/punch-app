@@ -1,0 +1,23 @@
+/* Aurora — premium light product UI, indigo to violet accent. */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  --paper:#f7f8fc; --card:#ffffff; --input-bg:#fbfcfe;
+  --ink:#111528; --ink-soft:#3a4160; --ink-mute:#6b7392;
+  --line:#e6e9f2; --line-strong:#d8dcea;
+  --accent:#4f46e5; --accent-ink:#ffffff;
+  --ok:#0f9d76; --ok-soft:#e6f7f1; --on-ok:#ffffff;
+  --warn:#c2790b; --warn-soft:#fdf3e2; --on-warn:#ffffff;
+  --danger:#e0405e; --danger-soft:#fdedf0;
+  --display:"Plus Jakarta Sans",system-ui,sans-serif;
+  --mono:"Inter",system-ui,sans-serif;
+  --radius:18px; --radius-sm:11px; --chip-radius:999px;
+  --shadow:0 1px 1px rgba(17,21,40,.04), 0 4px 10px -2px rgba(17,21,40,.06), 0 12px 24px -8px rgba(17,21,40,.06);
+  --topbar-bg:rgba(255,255,255,.8);
+  --clock-font:"Plus Jakarta Sans",system-ui,sans-serif;
+  --list-gap:8px; --item-pad:14px; --item-radius:12px; --item-bg:#fbfcfe;
+  --bg-image:
+    radial-gradient(900px 500px at 88% -12%, rgba(124,92,245,.10), transparent 60%),
+    radial-gradient(760px 460px at 6% 4%, rgba(79,70,229,.08), transparent 58%);
+  --bg-size:auto;
+}

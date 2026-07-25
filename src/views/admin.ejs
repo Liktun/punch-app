@@ -1,7 +1,8 @@
 <%- include('_head') %>
+<%- include('_themebar', { themeBack: 'admin' }) %>
 <div class="card">
   <h1>Rapport des heures</h1>
-  <% if (flash) { %><div class="flash ok"><%= flash.msg %></div><% } %>
+  <% if (flash) { %><div class="flash <%= flash.type === 'ok' ? 'ok' : 'warn' %>"><%= flash.msg %></div><% } %>
 
   <div class="period-nav">
     <a class="btn ghost" href="/admin?p=<%= offset - 1 %>">← Période précédente</a>

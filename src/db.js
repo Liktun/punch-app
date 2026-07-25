@@ -41,6 +41,13 @@ db.exec(`
     FOREIGN KEY (punch_id) REFERENCES punches(id) ON DELETE CASCADE
   );
 
+  -- Simple key/value app settings (e.g. the active visual theme).
+  CREATE TABLE IF NOT EXISTS settings (
+    key        TEXT PRIMARY KEY,
+    value      TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
   CREATE INDEX IF NOT EXISTS idx_punches_emp      ON punches(employee_id);
   CREATE INDEX IF NOT EXISTS idx_punches_emp_in   ON punches(employee_id, clock_in);
   CREATE INDEX IF NOT EXISTS idx_punches_open     ON punches(employee_id) WHERE clock_out IS NULL;

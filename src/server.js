@@ -15,6 +15,7 @@ import fs from 'node:fs';
 import db from './db.js';
 import { periodByOffset, periodFor, periodLabel } from './payperiod.js';
 import { aggregate, shiftNet, fmtHours as fmtHoursH, OT_RATE } from './hours.js';
+import { THEMES, getTheme, setTheme } from './themes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -56,13 +57,25 @@ app.use('/themes', express.static(path.join(__dirname, '..', 'revamp'), {
 // so browsers always fetch fresh CSS after a deploy, while keeping long cache otherwise.
 let ASSET_VER = Date.now().toString(36);
 try {
-  // Newest mtime across the stylesheets so any CSS change busts the cache.
-  const sheets = ['style.css', 'landing.css'].map((f) => {
-    try { return fs.statSync(path.join(__dirname, 'public', f)).mtimeMs; } catch { return 0; }
-  });
-  ASSET_VER = Math.max(...sheets).toString(36);
+  // Newest mtime across base.css and every theme file, so any CSS change
+  // busts the browser cache.
+  const pub = path.join(__dirname, 'public');
+  const themeDir = path.join(pub, 'themes');
+  const files = [path.join(pub, 'base.css')].concat(
+    fs.readdirSync(themeDir).filter((f) => f.endsWith('.css')).map((f) => path.join(themeDir, f))
+  );
+  const newest = files.reduce((max, f) => {
+    try { return Math.max(max, fs.statSync(f).mtimeMs); } catch { return max; }
+  }, 0);
+  if (newest > 0) ASSET_VER = newest.toString(36);
 } catch { /* keep fallback */ }
-app.use((req, res, next) => { res.locals.assetVer = ASSET_VER; next(); });
+app.use((req, res, next) => {
+  res.locals.assetVer = ASSET_VER;
+  // Active visual theme (admin-configurable) available to every view.
+  res.locals.theme = getTheme();
+  res.locals.themes = THEMES;
+  next();
+});
 
 const SqliteStore = BetterSqlite3Store(session);
 const sessDir = path.dirname(process.env.DB_PATH || './data/punch.sqlite');
@@ -503,6 +516,19 @@ app.post('/admin/punch/:pid/delete', requireAuth, requireAdmin, verifyCsrf, (req
   q.deletePunch.run(punch.id);
   req.session.flash = { type: 'ok', msg: 'Quart supprimé.' };
   res.redirect(`/admin/employee/${punch.employee_id}?p=${offset}`);
+});
+
+// Admin: change the app-wide visual theme.
+app.post('/admin/theme', requireAuth, requireAdmin, verifyCsrf, (req, res) => {
+  const id = String(req.body.theme || '');
+  const back = req.body.back === 'employees' ? '/admin/employees' : '/admin';
+  if (!setTheme(id)) {
+    req.session.flash = { type: 'warn', msg: 'Thème inconnu.' };
+    return res.redirect(back);
+  }
+  const label = THEMES.find((t) => t.id === id)?.label || id;
+  req.session.flash = { type: 'ok', msg: `Thème « ${label} » appliqué.` };
+  res.redirect(back);
 });
 
 // Admin: manage employees.
