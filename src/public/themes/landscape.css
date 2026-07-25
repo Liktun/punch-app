@@ -35,14 +35,23 @@ body::before {
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 40%);
           mask-image: linear-gradient(180deg, transparent 0, #000 40%);
 }
-/* A low sun on the horizon behind the hero */
-.landing::before, .hero::before {
-  content: ""; display: block; width: 92px; height: 92px; margin: 0 auto 10px;
+/* A low sun on the horizon behind the employee hero */
+.hero::before {
+  content: ""; display: block; width: 64px; height: 64px; margin: 0 auto 10px;
   border-radius: 50%;
   background: radial-gradient(circle at 50% 45%, #ffe6b0, #e8a24a 55%, transparent 72%);
   box-shadow: 0 0 70px 12px rgba(232,162,74,.35);
 }
-.hero::before { width: 64px; height: 64px; }
+
+/* ---- Signature hero: the setting sun ---- */
+.hero-mark { display: block; width: 120px; height: 120px; }
+.hero-mark .ring, .hero-mark .orbiter { display: none; }
+.hero-mark .core::after {
+  content: ""; width: 96px; height: 96px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #ffe6b0, #e8a24a 55%, transparent 72%);
+  box-shadow: 0 0 70px 12px rgba(232,162,74,.4);
+}
+.landing .rule { display: none; }
 
 /* Translucent glass panels over the scenery */
 .card, .punch-card, .theme-bar { backdrop-filter: blur(16px); }

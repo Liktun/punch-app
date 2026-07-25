@@ -81,6 +81,24 @@ body::after {
 .landing h1 { letter-spacing: -.04em; }
 .landing h1 em { font-style: normal; font-weight: 300; opacity: .5; color: #fff; }
 
+/* ---- Signature hero: a ringed planet ---- */
+.hero-mark { display: block; width: 150px; height: 150px; }
+.hero-mark .ring.r1 {
+  inset: 12px; border: 1px solid rgba(255,255,255,.5);
+  transform: rotate(-24deg) scaleY(.34);
+  box-shadow: 0 0 14px rgba(255,255,255,.2);
+}
+.hero-mark .ring.r2, .hero-mark .ring.r3, .hero-mark .orbiter { display: none; }
+.hero-mark .core::after {
+  content: ""; width: 96px; height: 96px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff, #cfcfcf 42%, #4a4a4a 78%, #1a1a1a);
+  box-shadow: 0 0 40px rgba(255,255,255,.25), inset -8px -10px 22px rgba(0,0,0,.6);
+}
+.landing .tagline-sub {
+  display: block; font-size: 1rem; color: rgba(255,255,255,.46); margin: 0 0 6px;
+}
+.landing .rule { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   body::before, body::after { animation: none; }
 }

@@ -60,4 +60,47 @@ h1, h2, .brand, .greeting {
   animation: kronos-spin 26s linear infinite;
 }
 @keyframes kronos-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .login-logo::after { animation: none; } }
+
+/* ---- Signature hero: the orbital clock ---- */
+.hero-mark { display: block; }
+.hero-mark .ring.r1 { border: 1px solid #2a2145; }
+.hero-mark .ring.r2 { border: 1px dashed rgba(201,162,75,.35); }
+.hero-mark .ring.r3 { border: 1px solid #8a733a; }
+.hero-mark .core::after {
+  content: "\29D6";            /* hourglass glyph */
+  font-size: 2rem; color: #f0d089;
+  filter: drop-shadow(0 0 14px rgba(240,208,137,.5));
+}
+.hero-mark .orbiter {
+  width: 10px; height: 10px; margin: -5px; background: #f0d089;
+  box-shadow: 0 0 12px #f0d089; transform-origin: 0 0;
+}
+.hero-mark .orbiter.a { animation: kronos-orbit 12s linear infinite; }
+.hero-mark .orbiter.b { animation: kronos-orbit2 26s linear infinite; }
+@keyframes kronos-orbit  { from { transform: rotate(0) translateX(84px); } to { transform: rotate(360deg) translateX(84px); } }
+@keyframes kronos-orbit2 { from { transform: rotate(0) translateX(58px); } to { transform: rotate(-360deg) translateX(58px); } }
+
+/* Engraved wordmark + subtitle, as in the mockup */
+.landing .wordmark {
+  font-size: 5rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700;
+  background: linear-gradient(180deg,#f0d089,#8a733a);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin: 16px 0 4px;
+}
+/* The gilded gradient covers the whole word, so the accent letter just
+   inherits it (kept visible — hiding it would drop the final "o"). */
+.landing .wordmark em { font-style: normal; color: inherit; background: none; }
+.landing .tagline-sub {
+  display: block; font-family: var(--display); font-size: 1rem;
+  letter-spacing: .34em; text-transform: uppercase; color: #8a83a3; margin: 0 0 8px;
+}
+.landing .landing-tag { font-style: italic; font-size: 1.4rem; }
+.landing .rule { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .login-logo::after, .hero-mark .orbiter { animation: none; }
+}
+@media (max-width: 560px) {
+  .hero-mark { width: 150px; height: 150px; }
+  .landing .wordmark { font-size: 3.2rem; }
+}

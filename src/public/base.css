@@ -228,6 +228,16 @@ input:focus { border-color: var(--accent); }
 }
 .landing h1 { font-size: 4.4rem; line-height: .95; margin: 14px 0 6px; }
 .landing h1 em { font-style: italic; color: var(--accent); }
+/* Decorative hero mark — off by default; each theme opts in and styles it. */
+.hero-mark { display: none; position: relative; width: 200px; height: 200px; margin: 0 auto 10px; }
+.hero-mark .ring { position: absolute; border-radius: 50%; }
+.hero-mark .ring.r1 { inset: 0; }
+.hero-mark .ring.r2 { inset: 26px; }
+.hero-mark .ring.r3 { inset: 60px; }
+.hero-mark .core { position: absolute; inset: 0; display: grid; place-items: center; }
+.hero-mark .orbiter { position: absolute; top: 50%; left: 50%; border-radius: 50%; }
+/* Subtitle under the wordmark — hidden unless a theme shows it. */
+.tagline-sub { display: none; }
 .landing-tag { font-family: var(--display); font-size: 1.25rem; color: var(--ink-soft); margin: 0 0 30px; line-height: 1.5; }
 .landing-cta { min-width: 260px; }
 .landing-note {
