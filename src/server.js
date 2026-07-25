@@ -56,7 +56,11 @@ app.use('/themes', express.static(path.join(__dirname, '..', 'revamp'), {
 // so browsers always fetch fresh CSS after a deploy, while keeping long cache otherwise.
 let ASSET_VER = Date.now().toString(36);
 try {
-  ASSET_VER = fs.statSync(path.join(__dirname, 'public', 'style.css')).mtimeMs.toString(36);
+  // Newest mtime across the stylesheets so any CSS change busts the cache.
+  const sheets = ['style.css', 'landing.css'].map((f) => {
+    try { return fs.statSync(path.join(__dirname, 'public', f)).mtimeMs; } catch { return 0; }
+  });
+  ASSET_VER = Math.max(...sheets).toString(36);
 } catch { /* keep fallback */ }
 app.use((req, res, next) => { res.locals.assetVer = ASSET_VER; next(); });
 
